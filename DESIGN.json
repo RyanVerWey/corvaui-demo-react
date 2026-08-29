@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-28T00:00:00-04:00",
+  "title": "Design System: Morrow Archive",
+  "extensions": {
+    "colorMeta": {
+      "light-accent": { "role": "primary", "displayName": "Register Teal", "canonical": "#03646B", "tonalRamp": ["#021617", "#04363D", "#063F47", "#03646B", "#03767E", "#69D6D4", "#B8CBC8", "#F4F7F5"] },
+      "signal-gold": { "role": "tertiary", "displayName": "Signal Gold", "canonical": "#D9B54E", "tonalRamp": ["#2B2300", "#4C3D08", "#756018", "#9F842B", "#D9B54E", "#E7CB78", "#F2DFA8", "#FBF4DA"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Editorial Display", "purpose": "Exhibition title and home-page narrative only." },
+      "body": { "displayName": "Working Text", "purpose": "Product copy, records, forms, and dense data." }
+    },
+    "shadows": [
+      { "name": "published-small", "value": "var(--corva-shadow-sm)", "purpose": "Menus and transient controls." },
+      { "name": "published-medium", "value": "var(--corva-shadow-md)", "purpose": "Drawers, dialogs, and active image surfaces." }
+    ],
+    "motion": [
+      { "name": "published-fast", "value": "var(--corva-motion-fast)", "purpose": "Control feedback." },
+      { "name": "published-normal", "value": "var(--corva-motion-normal)", "purpose": "Menus and state transitions." }
+    ],
+    "breakpoints": [
+      { "name": "compact", "value": "40rem" },
+      { "name": "wide", "value": "64rem" }
+    ]
+  },
+  "components": [],
+  "narrative": {
+    "northStar": "The Living Register",
+    "overview": "A museum working register beside an active gallery: ordered, material, and alive with evidence. Editorial invitation becomes operational precision without changing component vocabulary.",
+    "keyCharacteristics": ["Museum-grade image crops", "Flat ruled layouts", "Mobile-first progressive disclosure", "Published CorvaUI components and tokens"],
+    "rules": [
+      { "name": "The Published Palette Rule", "body": "Never declare or override a CorvaUI color token in application CSS.", "section": "colors" },
+      { "name": "The Working Surface Rule", "body": "Shadows are reserved for active overlays and transient hierarchy.", "section": "elevation" }
+    ],
+    "dos": ["Do use concept-light and concept-dark exactly as published.", "Do make mobile workflows complete and touch-safe."],
+    "donts": ["Don't create a generic SaaS dashboard or decorative card grid.", "Don't override or recreate CorvaUI theme colors."]
+  }
+}
