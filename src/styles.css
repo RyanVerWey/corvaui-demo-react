@@ -135,9 +135,107 @@ h3 {
   outline-offset: 3px;
 }
 
-.desktop-menubar,
+.desktop-primary-nav,
 .desktop-sidebar-shell {
   display: none;
+}
+
+.desktop-primary-nav {
+  min-width: 0;
+  align-items: stretch;
+  gap: var(--corva-space-1);
+}
+
+.desktop-nav-link,
+.desktop-primary-nav .corva-menu-trigger {
+  position: relative;
+  min-height: 2.75rem;
+  padding-inline: var(--corva-space-3);
+  border: 0;
+  border-radius: 0;
+  color: var(--corva-color-text);
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  font-weight: var(--corva-font-weight-medium);
+  white-space: nowrap;
+}
+
+.desktop-nav-link:hover,
+.desktop-primary-nav .corva-menu-trigger:hover {
+  border-color: transparent;
+  background: var(--corva-color-subtle);
+  transform: none;
+}
+
+.desktop-nav-link:focus-visible,
+.desktop-primary-nav .corva-menu-trigger:focus-visible {
+  outline: 0;
+  box-shadow: var(--corva-shadow-focus);
+}
+
+.desktop-nav-link::after,
+.desktop-nav-menu .corva-menu-trigger::after {
+  position: absolute;
+  right: var(--corva-space-3);
+  bottom: 0;
+  left: var(--corva-space-3);
+  height: 2px;
+  background: transparent;
+  content: "";
+}
+
+.desktop-nav-link[aria-current="page"]::after,
+.desktop-nav-menu[data-active="true"] .corva-menu-trigger::after {
+  background: var(--corva-color-accent);
+}
+
+.desktop-nav-label,
+.desktop-menu-item-label {
+  display: inline-flex;
+  width: 100%;
+  align-items: center;
+}
+
+.desktop-nav-label {
+  gap: var(--corva-space-1);
+}
+
+.desktop-nav-label .corva-icon {
+  width: 1rem;
+  height: 1rem;
+  transition: transform var(--corva-motion-fast) ease;
+}
+
+.desktop-nav-menu .corva-menu-trigger[aria-expanded="true"] .corva-icon {
+  transform: rotate(180deg);
+}
+
+.desktop-nav-menu .corva-menu-content {
+  top: 100%;
+  gap: 0;
+  padding: var(--corva-space-2);
+}
+
+.desktop-nav-menu:last-child .corva-menu-content {
+  right: 0;
+  left: auto;
+}
+
+.desktop-nav-menu .corva-menu-item {
+  min-height: 2.75rem;
+  border: 0;
+  border-radius: var(--corva-radius-xs);
+  background: transparent;
+  box-shadow: none;
+  font-weight: var(--corva-font-weight-medium);
+  transform: none;
+}
+
+.desktop-nav-menu .corva-menu-item:hover {
+  border-color: transparent;
+  background: var(--corva-color-subtle);
+  transform: none;
 }
 
 .mobile-drawer {
@@ -719,7 +817,7 @@ h3 {
     padding-bottom: 0;
   }
 
-  .desktop-menubar {
+  .desktop-primary-nav {
     display: flex;
   }
 
@@ -838,12 +936,6 @@ h3 {
   }
 
   .mobile-records {
-    display: none;
-  }
-}
-
-@media (min-width: 64rem) and (max-width: 87.999rem) {
-  .desktop-menubar .corva-menubar-item:nth-child(n + 6) {
     display: none;
   }
 }

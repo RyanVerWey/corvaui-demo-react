@@ -170,6 +170,41 @@ test("exhibition hero uses one immersive image field", async ({ page }) => {
   }
 });
 
+test("desktop navigation uses grouped dropdown menus", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/#/collection", { waitUntil: "networkidle" });
+
+  const navigation = page.getByRole("navigation", {
+    name: "Primary navigation",
+  });
+  await expect(navigation).toBeVisible();
+  await expect(
+    navigation.locator(":scope > button, :scope > .corva-menu"),
+  ).toHaveCount(4);
+
+  const collections = navigation.getByRole("button", { name: "Collections" });
+  await expect(collections).toHaveAttribute("aria-expanded", "false");
+  await expect(navigation.locator('[data-active="true"]')).toContainText(
+    "Collections",
+  );
+  await collections.click();
+  await expect(collections).toHaveAttribute("aria-expanded", "true");
+  await expect(
+    navigation.getByRole("menuitem", { name: "Loans" }),
+  ).toBeVisible();
+  await navigation.getByRole("menuitem", { name: "Loans" }).click();
+  await expect(page).toHaveURL(/#\/loans$/);
+
+  const institution = navigation.getByRole("button", { name: "Institution" });
+  await institution.click();
+  await expect(
+    navigation.getByRole("menuitem", { name: "System proof" }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(institution).toHaveAttribute("aria-expanded", "false");
+  await expectNoPageOverflow(page);
+});
+
 test("mobile navigation and touch workflow remain usable", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/#/overview", { waitUntil: "networkidle" });

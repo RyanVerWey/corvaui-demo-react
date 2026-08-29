@@ -154,6 +154,38 @@ const routes: Array<{
   },
 ];
 
+const desktopNavigation: Array<{
+  id: string;
+  label: string;
+  routes: Array<{ id: RouteId; label: string }>;
+}> = [
+  {
+    id: "collections",
+    label: "Collections",
+    routes: [
+      { id: "collection", label: "Collection register" },
+      { id: "loans", label: "Loans" },
+      { id: "conservation", label: "Conservation" },
+    ],
+  },
+  {
+    id: "operations",
+    label: "Operations",
+    routes: [
+      { id: "overview", label: "Operations dashboard" },
+      { id: "calendar", label: "Installation calendar" },
+    ],
+  },
+  {
+    id: "institution",
+    label: "Institution",
+    routes: [
+      { id: "settings", label: "Institution settings" },
+      { id: "proof", label: "System proof" },
+    ],
+  },
+];
+
 const collectionRows = [
   {
     accession: "MA.2024.018",
@@ -443,16 +475,44 @@ export function App() {
         className="global-appbar"
         title="Morrow Archive"
         navigation={
-          <MenuBar
-            className="desktop-menubar"
-            label="Primary"
-            items={routes.map((item) => ({
-              id: item.id,
-              label: item.label,
-              current: route === item.id,
-              onSelect: () => navigate(item.id),
-            }))}
-          />
+          <nav className="desktop-primary-nav" aria-label="Primary navigation">
+            <button
+              className="desktop-nav-link"
+              type="button"
+              aria-current={route === "exhibition" ? "page" : undefined}
+              onClick={() => navigate("exhibition")}
+            >
+              Exhibition
+            </button>
+            {desktopNavigation.map((group) => {
+              const active = group.routes.some((item) => item.id === route);
+              return (
+                <Menu
+                  className="desktop-nav-menu"
+                  data-active={active ? "true" : "false"}
+                  key={group.id}
+                  label={
+                    <span className="desktop-nav-label">
+                      {group.label}
+                      <Icon name="chevronDown" />
+                    </span>
+                  }
+                  items={group.routes.map((item) => ({
+                    id: item.id,
+                    label: (
+                      <span className="desktop-menu-item-label">
+                        <span>{item.label}</span>
+                        {route === item.id && (
+                          <span className="sr-only"> (current page)</span>
+                        )}
+                      </span>
+                    ),
+                    onSelect: () => navigate(item.id),
+                  }))}
+                />
+              );
+            })}
+          </nav>
         }
         actions={
           <Stack direction="row" gap="sm" align="center">
@@ -2414,6 +2474,13 @@ function SettingsPage({
 
 function ProofPage({ showMessage }: PageProps) {
   const [tab, setTab] = React.useState("coverage");
+  const [coverageScope, setCoverageScope] = React.useState("all");
+  const visibleCoverageRows =
+    coverageScope === "all"
+      ? coverageRows
+      : coverageRows.filter(
+          (row) => row.group.toLowerCase() === coverageScope,
+        );
   return (
     <PageFrame
       route="System proof"
@@ -2449,6 +2516,30 @@ function ProofPage({ showMessage }: PageProps) {
             />
             <Metric label="Omitted" value="0" note="No specimen-only imports" />
           </section>
+          <MenuBar
+            label="Filter component coverage"
+            items={[
+              { id: "all", label: "All", current: coverageScope === "all" },
+              {
+                id: "atoms",
+                label: "Atoms",
+                current: coverageScope === "atoms",
+              },
+              {
+                id: "molecules",
+                label: "Molecules",
+                current: coverageScope === "molecules",
+              },
+              {
+                id: "organisms",
+                label: "Organisms",
+                current: coverageScope === "organisms",
+              },
+            ].map((item) => ({
+              ...item,
+              onSelect: () => setCoverageScope(item.id),
+            }))}
+          />
           <DataTable
             caption="CorvaUI coverage summary"
             columns={[
@@ -2457,7 +2548,7 @@ function ProofPage({ showMessage }: PageProps) {
               { key: "routes", header: "Primary use" },
               { key: "status", header: "Coverage" },
             ]}
-            rows={coverageRows}
+            rows={visibleCoverageRows}
           />
           <Accordion
             items={[
