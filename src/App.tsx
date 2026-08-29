@@ -837,7 +837,7 @@ function ExhibitionPage({ navigate, showMessage }: PageProps) {
             loading="lazy"
           />
         </figure>
-        <div>
+        <div className="image-led-copy">
           <span className="eyebrow">Behind the exhibition</span>
           <Typography id="behind-title" as="h2" variant="title">
             Care is a choreography of small decisions.
@@ -870,6 +870,7 @@ function ExhibitionPage({ navigate, showMessage }: PageProps) {
             ]}
           />
           <Button
+            className="image-led-cta"
             onClick={() => {
               showMessage("Behind-the-scenes visit added to your schedule.");
               navigate("calendar");

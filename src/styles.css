@@ -410,6 +410,10 @@ h3 {
   object-fit: cover;
 }
 
+.image-led-cta {
+  margin-top: var(--corva-space-4);
+}
+
 .metric-strip,
 .proof-intro {
   display: grid;

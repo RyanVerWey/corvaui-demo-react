@@ -118,6 +118,22 @@ test("theme choice persists across reload", async ({ page }) => {
   );
 });
 
+test("exhibition CTA is separated from its accordion", async ({ page }) => {
+  for (const width of [590, 390]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto("/#/", { waitUntil: "networkidle" });
+    const spacing = await page.locator(".image-led-cta").evaluate((button) => {
+      const accordion = button.previousElementSibling;
+      if (!accordion) return -1;
+      return Math.round(
+        button.getBoundingClientRect().top -
+          accordion.getBoundingClientRect().bottom,
+      );
+    });
+    expect(spacing).toBeGreaterThanOrEqual(16);
+  }
+});
+
 test("mobile navigation and touch workflow remain usable", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/#/overview", { waitUntil: "networkidle" });
