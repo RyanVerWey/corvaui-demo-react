@@ -44,6 +44,13 @@ describe("Morrow Archive flagship integrity", () => {
     expect(styles).toContain("var(--corva-color-accent-strong)");
   });
 
+  it("shows a signed-in account menu with settings and logout actions", () => {
+    expect(source).toContain('className="account-menu"');
+    expect(source).toContain('className="account-menu-name"');
+    expect(source).toContain('onSelect: () => navigate("settings")');
+    expect(source).toContain("Log out");
+  });
+
   it("avoids rejected visual shortcuts", () => {
     expect(styles).not.toMatch(/linear-gradient|radial-gradient|background-clip\s*:\s*text/i);
     expect(styles).not.toMatch(/border-(?:left|right)\s*:\s*[2-9]/i);

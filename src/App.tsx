@@ -567,10 +567,38 @@ export function App() {
               <Icon name="menu" />
               <span>Menu</span>
             </button>
-            <Avatar
-              initials="AM"
-              size="sm"
-              aria-label="Signed in as Amina Morrow"
+            <Menu
+              className="account-menu"
+              label={
+                <span className="account-menu-label">
+                  <Avatar aria-hidden="true" initials="AM" size="sm" />
+                  <span className="account-menu-name">
+                    Amina<span className="account-menu-surname"> Morrow</span>
+                  </span>
+                  <Icon name="chevronDown" />
+                </span>
+              }
+              items={[
+                {
+                  id: "settings",
+                  label: (
+                    <span className="account-menu-item-label">
+                      <Icon name="settings" />
+                      Settings
+                    </span>
+                  ),
+                  onSelect: () => navigate("settings"),
+                },
+                {
+                  id: "logout",
+                  label: (
+                    <span className="account-menu-item-label">
+                      <Icon name="logout" />
+                      Log out
+                    </span>
+                  ),
+                },
+              ]}
             />
           </Stack>
         }

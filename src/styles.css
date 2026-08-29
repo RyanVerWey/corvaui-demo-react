@@ -146,6 +146,49 @@ h3 {
   outline-offset: 3px;
 }
 
+.account-menu {
+  align-items: center;
+}
+
+.account-menu .corva-menu-trigger {
+  min-height: 2.75rem;
+  padding-inline: var(--corva-space-2);
+}
+
+.account-menu-label,
+.account-menu-item-label {
+  display: inline-flex;
+  gap: var(--corva-space-2);
+  align-items: center;
+}
+
+.account-menu-name {
+  font-weight: var(--corva-font-weight-bold);
+  white-space: nowrap;
+}
+
+.account-menu-label > .corva-icon,
+.account-menu-item-label > .corva-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.account-menu .corva-menu-content {
+  right: 0;
+  left: auto;
+  min-width: 10rem;
+}
+
+.account-menu .corva-menu-item {
+  justify-content: flex-start;
+}
+
+@media (max-width: 23.5rem) {
+  .account-menu-surname {
+    display: none;
+  }
+}
+
 .desktop-primary-nav,
 .desktop-sidebar-shell {
   display: none;

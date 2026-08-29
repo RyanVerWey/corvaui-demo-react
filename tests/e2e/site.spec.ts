@@ -130,6 +130,25 @@ test("app bar brand mark returns to the exhibition", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Measures of distance" })).toBeVisible();
 });
 
+test("signed-in account menu routes to settings and leaves logout inert", async ({ page }) => {
+  await page.goto("/#/loans", { waitUntil: "networkidle" });
+  const account = page.getByRole("button", { name: "Amina Morrow" });
+
+  await expect(account).toBeVisible();
+  await expect(account).toContainText("Amina Morrow");
+  await account.click();
+  await expect(page.getByRole("menuitem", { name: "Settings" })).toBeVisible();
+  await expect(page.getByRole("menuitem", { name: "Log out" })).toBeVisible();
+  await page.getByRole("menuitem", { name: "Settings" }).click();
+  await expect(page).toHaveURL(/#\/settings$/);
+  await expect(page.getByRole("heading", { name: "Institution settings" })).toBeVisible();
+
+  await account.click();
+  await page.getByRole("menuitem", { name: "Log out" }).click();
+  await expect(page).toHaveURL(/#\/settings$/);
+  await expect(page.getByRole("menuitem", { name: "Log out" })).toHaveCount(0);
+});
+
 test("exhibition CTA is separated from its accordion", async ({ page }) => {
   for (const width of [590, 390]) {
     await page.setViewportSize({ width, height: 844 });
