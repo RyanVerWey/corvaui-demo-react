@@ -658,6 +658,14 @@ h3 {
   min-width: 0;
 }
 
+.conservation-actions {
+  width: 100%;
+}
+
+.conservation-actions > * {
+  flex: 1 1 8rem;
+}
+
 .form-layout,
 .settings-layout,
 .conservation-workspace {
@@ -725,6 +733,15 @@ h3 {
 }
 
 @media (min-width: 40rem) {
+  .conservation-actions {
+    width: auto;
+    justify-self: end;
+  }
+
+  .conservation-actions > * {
+    flex: 0 1 auto;
+  }
+
   .page-frame {
     padding-inline: var(--corva-space-6);
   }

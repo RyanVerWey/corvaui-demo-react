@@ -236,6 +236,29 @@ test("desktop workspace navigation remains compact and grouped", async ({
   await expectNoPageOverflow(page);
 });
 
+test("conservation actions avoid an empty full-width toolbar", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/#/conservation", { waitUntil: "networkidle" });
+
+  const actions = page.getByRole("group", {
+    name: "Conservation record actions",
+  });
+  await expect(actions).toBeVisible();
+  await expect(
+    page.getByRole("toolbar", { name: "Conservation actions" }),
+  ).toHaveCount(0);
+  const widths = await actions.evaluate((element) => ({
+    actions: Math.round(element.getBoundingClientRect().width),
+    form: Math.round(
+      element.closest(".conservation-form")!.getBoundingClientRect().width,
+    ),
+  }));
+  expect(widths.actions).toBeLessThan(widths.form / 2);
+  await expectNoPageOverflow(page);
+});
+
 test("mobile navigation and touch workflow remain usable", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/#/overview", { waitUntil: "networkidle" });

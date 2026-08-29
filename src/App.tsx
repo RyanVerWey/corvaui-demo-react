@@ -2111,27 +2111,24 @@ function ConservationPage({ showMessage }: PageProps) {
                 )
               }
             />
-            <Toolbar
-              label="Conservation actions"
-              justify="end"
-              actions={
-                <ButtonGroup label="Conservation record actions">
-                  <Button
-                    variant="secondary"
-                    onClick={() => showMessage("Examination draft saved.")}
-                  >
-                    Save draft
-                  </Button>
-                  <Button
-                    onClick={() =>
-                      showMessage("Finding added to the condition report.")
-                    }
-                  >
-                    Add finding
-                  </Button>
-                </ButtonGroup>
-              }
-            />
+            <ButtonGroup
+              className="conservation-actions"
+              label="Conservation record actions"
+            >
+              <Button
+                variant="secondary"
+                onClick={() => showMessage("Examination draft saved.")}
+              >
+                Save draft
+              </Button>
+              <Button
+                onClick={() =>
+                  showMessage("Finding added to the condition report.")
+                }
+              >
+                Add finding
+              </Button>
+            </ButtonGroup>
           </div>
         </div>
       )}
