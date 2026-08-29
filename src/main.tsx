@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot, type Root } from "react-dom/client";
-import "@apexui/tokens/css";
-import "@apexui/react/styles.css";
+import "@corvaui/tokens/css";
+import "@corvaui/react/styles.css";
 import {
   Alert,
   Autocomplete,
@@ -40,7 +40,7 @@ import {
   Toolbar,
   Typography,
   WorkflowBoard
-} from "@apexui/react";
+} from "@corvaui/react";
 import "./styles.css";
 
 type InteractiveDataGridProps = React.ComponentProps<typeof DataGrid> & {
@@ -182,14 +182,16 @@ const calendarDays = Array.from({ length: 35 }, (_, index) => {
 });
 
 const proofSteps = [
-  { id: "install", label: "Install", description: "React imports @apexui/react and @apexui/tokens." },
-  { id: "theme", label: "Theme", description: "The route shell controls data-apex-theme for light and dark." },
+  { id: "install", label: "Install", description: "React imports @corvaui/react and @corvaui/tokens." },
+  { id: "theme", label: "Theme", description: "The route shell controls data-corva-theme for light and dark." },
   { id: "route", label: "Route", description: "Each business page is reachable by hash route." },
-  { id: "ship", label: "Ship", description: "GitHub Pages deploys the real demo surface." }
+  { id: "ship", label: "Ship", description: "Vercel deploys the real demo surface." }
 ];
 
-const brandAssetBase = window.location.pathname.startsWith("/apexui-demo-react") ? "/apexui-demo-react/" : "/";
+const brandAssetBase = window.location.pathname.startsWith("/corvaui-demo-react") ? "/corvaui-demo-react/" : "/";
 const corvaMarkSrc = `${brandAssetBase}corvaui-raven-mark.svg`;
+const rooftopImageSrc = `${brandAssetBase}images/corva-rooftop.jpg`;
+const chillersImageSrc = `${brandAssetBase}images/corva-chillers.jpg`;
 
 function getRouteFromHash(): RouteId {
   const value = window.location.hash.replace(/^#\/?/, "");
@@ -209,11 +211,23 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    document.documentElement.dataset.apexTheme = theme;
+    document.documentElement.dataset.corvaTheme = theme;
     return () => {
-      delete document.documentElement.dataset.apexTheme;
+      delete document.documentElement.dataset.corvaTheme;
     };
   }, [theme]);
+
+  React.useEffect(() => {
+    const timer = window.setTimeout(() => {
+      document.querySelectorAll<HTMLElement>(".corva-table-container").forEach((container) => {
+        const caption = container.querySelector("caption")?.textContent?.trim() ?? "Data table";
+        container.tabIndex = 0;
+        container.setAttribute("role", "region");
+        container.setAttribute("aria-label", `${caption}, horizontally scrollable`);
+      });
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [route]);
 
   const navigate = (nextRoute: RouteId) => {
     window.location.hash = nextRoute === "home" ? "#/" : `#/${nextRoute}`;
@@ -221,8 +235,9 @@ function App() {
   };
 
   return (
-    <main className="site-shell" data-apex-theme={theme}>
+    <main className="site-shell" data-corva-theme={theme}>
       <SiteHeader route={route} navigate={navigate} mode={mode} setMode={setMode} />
+      <MobileMenu route={route} navigate={navigate} mode={mode} setMode={setMode} />
 
       <Container size="lg" className="route-shell">
         <section className="route-panel" aria-label={`${activeRoute.label} page`}>
@@ -239,6 +254,28 @@ function App() {
       <SiteFooter navigate={navigate} />
 
     </main>
+  );
+}
+
+function MobileMenu({ route, navigate, mode, setMode }: { route: RouteId; navigate: (route: RouteId) => void; mode: "light" | "dark"; setMode: (mode: "light" | "dark") => void }) {
+  return (
+    <details className="mobile-menu">
+      <summary>Menu</summary>
+      <nav aria-label="Mobile navigation">
+        {routes.map((item) => (
+          <a
+            aria-current={route === item.id ? "page" : undefined}
+            href={item.id === "home" ? "#/" : `#/${item.id}`}
+            key={item.id}
+            onClick={(event) => { event.preventDefault(); navigate(item.id); }}
+          >{item.label}</a>
+        ))}
+      </nav>
+      <div className="mobile-menu-actions">
+        <Button size="sm" onClick={() => navigate("work-orders")}>Book service</Button>
+        <Switch label="Dark mode" checked={mode === "dark"} onChange={() => setMode(mode === "light" ? "dark" : "light")} />
+      </div>
+    </details>
   );
 }
 
@@ -307,36 +344,39 @@ function HomePage({ navigate, theme }: PageProps) {
           <Stack direction="row" gap="sm" align="center" className="site-actions">
             <Button onClick={() => navigate("work-orders")}>Book a service visit</Button>
             <Button variant="secondary" onClick={() => navigate("metrics")}>View live metrics</Button>
-            <Link href="https://www.npmjs.com/package/@apexui/react" variant="standalone">CorvaUI React</Link>
+            <Link href="https://www.npmjs.com/package/@corvaui/react" variant="standalone">CorvaUI React</Link>
           </Stack>
         </>
       }
       consolePanel={
-        <Paper elevation="md" className="hero-console">
-          <Toolbar
-            label="Today at Corva"
-            actions={<Badge tone="success">{theme}</Badge>}
-          >
-            <ButtonGroup label="Home actions">
-              <Button size="sm" onClick={() => navigate("customers")}>Accounts</Button>
-              <Button size="sm" variant="secondary" onClick={() => navigate("settings")}>Preferences</Button>
-            </ButtonGroup>
-          </Toolbar>
-          <Chart
-            label="Service mix"
-            data={[
-              { label: "Maintenance", value: 86 },
-              { label: "Emergency", value: 34 },
-              { label: "Install", value: 52 },
-              { label: "Audit", value: 69 }
-            ]}
-          />
-          <div className="metric-band">
-            <Metric label="Open orders" value="128" fill={82} progressLabel="Ready to dispatch" tone="info" />
-            <Metric label="First-time fix" value="94%" fill={94} progressLabel="Quality trend" tone="success" />
-            <Metric label="At-risk sites" value="7" fill={38} progressLabel="Risk contained" tone="warning" />
-          </div>
-        </Paper>
+        <div className="hero-visual">
+          <figure className="hero-photo">
+            <img src={rooftopImageSrc} alt="Commercial rooftop ventilation equipment under active monitoring" />
+            <figcaption><span>North Loop campus</span><strong>18 assets online</strong></figcaption>
+          </figure>
+          <Paper elevation="md" className="hero-console">
+            <Toolbar label="Today at Corva" actions={<Badge tone="success">{theme}</Badge>}>
+              <ButtonGroup label="Home actions">
+                <Button size="sm" onClick={() => navigate("customers")}>Accounts</Button>
+                <Button size="sm" variant="secondary" onClick={() => navigate("settings")}>Preferences</Button>
+              </ButtonGroup>
+            </Toolbar>
+            <Chart
+              label="Service mix"
+              data={[
+                { label: "Maintenance", value: 86 },
+                { label: "Emergency", value: 34 },
+                { label: "Install", value: 52 },
+                { label: "Audit", value: 69 }
+              ]}
+            />
+            <div className="metric-band">
+              <Metric label="Open orders" value="128" fill={82} progressLabel="Ready to dispatch" tone="info" />
+              <Metric label="First-time fix" value="94%" fill={94} progressLabel="Quality trend" tone="success" />
+              <Metric label="At-risk sites" value="7" fill={38} progressLabel="Risk contained" tone="warning" />
+            </div>
+          </Paper>
+        </div>
       }
       proof={
         <>
@@ -382,6 +422,10 @@ function MetricsPage(_props: PageProps) {
       }
       visualGrid={
         <>
+        <figure className="operations-photo">
+          <img src={chillersImageSrc} alt="Rows of commercial cooling equipment ready for inspection" />
+          <figcaption><span>Asset intelligence</span><strong>Condition evidence joins every work order.</strong></figcaption>
+        </figure>
         <Paper elevation="sm" className="panel-stack dispatch-panel">
           <div className="panel-heading">
             <div>
@@ -646,7 +690,7 @@ function DataTablePage(_props: PageProps) {
           </Paper>
           <Paper elevation="sm" className="panel-stack">
             <Typography variant="title">Release note</Typography>
-            <Typography variant="body">This page uses the current @apexui/react package from npm.</Typography>
+            <Typography variant="body">This page uses the current @corvaui/react package from npm.</Typography>
           </Paper>
         </>
       }
@@ -721,7 +765,7 @@ function ProofPage({ theme }: PageProps) {
       title="React integration details"
       description="The demo installs real CorvaUI packages from npm and uses route-level composition instead of preview-only examples."
       install={
-        <Card eyebrow="Install path" title="@apexui/react">
+        <Card eyebrow="Install path" title="@corvaui/react">
           <Stepper activeIndex={3} steps={proofSteps} />
         </Card>
       }
@@ -730,12 +774,12 @@ function ProofPage({ theme }: PageProps) {
           <Typography variant="title">What this route proves</Typography>
           <List
             items={[
-              { id: "routing", label: "Routing", description: "Hash routes work on GitHub Pages without rewrite config.", meta: <Badge tone="success">Live</Badge> },
+              { id: "routing", label: "Routing", description: "Hash routes work on Vercel with a root-hosted SPA fallback.", meta: <Badge tone="success">Live</Badge> },
               { id: "theme", label: "Theme", description: `${theme} is applied to html and the app shell.`, meta: <Badge tone="info">Scoped</Badge> },
               { id: "components", label: "Components", description: "Marketing, dashboard, forms, records, settings, and proof pages use CorvaUI components.", meta: <Badge tone="success">Dogfood</Badge> }
             ]}
           />
-          <Alert tone="info" title="Registry check">This app depends on @apexui/react and @apexui/tokens from npm.</Alert>
+          <Alert tone="info" title="Registry check">This app depends on @corvaui/react and @corvaui/tokens from npm.</Alert>
         </Paper>
       }
       coverage={
@@ -889,9 +933,9 @@ function Metric({ fill, label, note, progressLabel, tone, value }: { fill?: numb
   );
 }
 
-type RootElement = HTMLElement & { __apexRoot?: Root };
+type RootElement = HTMLElement & { __corvaRoot?: Root };
 
 const rootElement = document.getElementById("root") as RootElement;
-const root = rootElement.__apexRoot ?? createRoot(rootElement);
-rootElement.__apexRoot = root;
+const root = rootElement.__corvaRoot ?? createRoot(rootElement);
+rootElement.__corvaRoot = root;
 root.render(<App />);
