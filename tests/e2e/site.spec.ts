@@ -149,6 +149,31 @@ test("signed-in account menu routes to settings and leaves logout inert", async 
   await expect(page.getByRole("menuitem", { name: "Log out" })).toHaveCount(0);
 });
 
+test("institutional footer exposes routes, socials, and CorvaUI documentation", async ({ page }) => {
+  await page.goto("/#/loans", { waitUntil: "networkidle" });
+  const footer = page.getByRole("contentinfo", { name: "Morrow Archive footer" });
+
+  await footer.scrollIntoViewIfNeeded();
+  await expect(footer).toBeVisible();
+  await expect(footer.getByText("Morrow Archive", { exact: true })).toBeVisible();
+  await expect(footer.getByRole("navigation", { name: "Explore footer links" })).toBeVisible();
+  await expect(footer.getByRole("navigation", { name: "Institution footer links" })).toBeVisible();
+  await expect(footer.getByRole("navigation", { name: "Social links" })).toBeVisible();
+  await expect(footer.getByRole("link", { name: "Built with CorvaUI" })).toHaveAttribute(
+    "href",
+    "https://www.corvaui.com/",
+  );
+  await expect(footer.getByRole("link", { name: /Instagram/ })).toHaveAttribute("target", "_blank");
+  await footer.getByRole("link", { name: "Collection register" }).click();
+  await expect(page).toHaveURL(/#\/collection$/);
+  await expect(page.getByRole("heading", { name: "Collection register" })).toBeVisible();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.reload({ waitUntil: "networkidle" });
+  await footer.scrollIntoViewIfNeeded();
+  await expectNoPageOverflow(page);
+});
+
 test("exhibition CTA is separated from its accordion", async ({ page }) => {
   for (const width of [590, 390]) {
     await page.setViewportSize({ width, height: 844 });

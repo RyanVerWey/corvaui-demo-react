@@ -210,6 +210,94 @@ function MorrowMark() {
   );
 }
 
+function SiteFooter() {
+  const footerGroups = [
+    {
+      label: "Explore",
+      links: [
+        { href: "#/", label: "Current exhibition" },
+        { href: "#/overview", label: "Operations" },
+        { href: "#/collection", label: "Collection register" },
+        { href: "#/loans", label: "Loans" },
+      ],
+    },
+    {
+      label: "Institution",
+      links: [
+        { href: "#/conservation", label: "Conservation" },
+        { href: "#/calendar", label: "Installation calendar" },
+        { href: "#/settings", label: "Settings" },
+        { href: "#/proof", label: "System proof" },
+      ],
+    },
+  ];
+  const socialLinks = [
+    { href: "https://www.instagram.com/", label: "Instagram" },
+    { href: "https://www.linkedin.com/", label: "LinkedIn" },
+    { href: "https://www.youtube.com/", label: "YouTube" },
+  ];
+
+  return (
+    <footer className="site-footer" aria-label="Morrow Archive footer">
+      <div className="site-footer-inner">
+        <div className="site-footer-grid">
+          <section className="site-footer-brand" aria-labelledby="footer-brand-title">
+            <a className="site-footer-lockup" href="#/" aria-label="Morrow Archive home">
+              <MorrowMark />
+              <strong id="footer-brand-title">Morrow Archive</strong>
+            </a>
+            <Typography variant="body">
+              A working archive for exhibitions, collections, and the people
+              who care for them.
+            </Typography>
+            <a
+              className="site-footer-docs-link"
+              href="https://www.corvaui.com/"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Built with CorvaUI
+              <Icon name="linkExternal" />
+            </a>
+          </section>
+
+          {footerGroups.map((group) => (
+            <nav aria-label={`${group.label} footer links`} key={group.label}>
+              <h2 className="site-footer-heading">{group.label}</h2>
+              <ul className="site-footer-links">
+                {group.links.map((link) => (
+                  <li key={link.href}>
+                    <a href={link.href}>{link.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+
+          <nav aria-label="Social links">
+            <h2 className="site-footer-heading">Follow</h2>
+            <ul className="site-footer-links site-footer-socials">
+              {socialLinks.map((link) => (
+                <li key={link.href}>
+                  <a href={link.href} rel="noreferrer" target="_blank">
+                    {link.label}
+                    <span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+
+        <div className="site-footer-meta">
+          <span>© 2026 Morrow Archive</span>
+          <span>Collection care, public access, and responsible stewardship.</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
 const collectionRows = [
   {
     accession: "MA.2024.018",
@@ -728,6 +816,8 @@ export function App() {
           )}
         </main>
       </div>
+
+      <SiteFooter />
 
       {route !== "exhibition" && (
         <BottomNavigation

@@ -51,6 +51,16 @@ describe("Morrow Archive flagship integrity", () => {
     expect(source).toContain("Log out");
   });
 
+  it("includes a complete institutional footer", () => {
+    expect(source).toContain("function SiteFooter()");
+    expect(source).toContain("<SiteFooter />");
+    expect(source).toContain("https://www.corvaui.com/");
+    expect(source).toContain("Instagram");
+    expect(source).toContain("LinkedIn");
+    expect(source).toContain("YouTube");
+    expect(styles).toContain(".site-footer-grid");
+  });
+
   it("avoids rejected visual shortcuts", () => {
     expect(styles).not.toMatch(/linear-gradient|radial-gradient|background-clip\s*:\s*text/i);
     expect(styles).not.toMatch(/border-(?:left|right)\s*:\s*[2-9]/i);
