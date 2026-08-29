@@ -105,19 +105,30 @@ h3 {
 
 .brand-button {
   display: inline-flex;
-  gap: var(--corva-space-3);
+  width: 2.75rem;
   align-items: center;
+  justify-content: center;
+  order: -1;
   padding: 0;
-  font-weight: var(--corva-font-weight-bold);
-  letter-spacing: 0.02em;
-  white-space: nowrap;
 }
 
-.brand-rule {
+.morrow-mark {
   width: 1.75rem;
-  height: 1rem;
-  border-top: 2px solid var(--corva-color-accent-strong);
-  border-bottom: 2px solid var(--corva-color-accent-strong);
+  height: 1.75rem;
+  flex: none;
+  color: var(--corva-color-accent-text);
+}
+
+.morrow-mark-outline {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.morrow-mark-object {
+  fill: var(--corva-color-accent-strong);
 }
 
 .menu-trigger {

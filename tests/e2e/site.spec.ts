@@ -118,6 +118,18 @@ test("theme choice persists across reload", async ({ page }) => {
   );
 });
 
+test("app bar brand mark returns to the exhibition", async ({ page }) => {
+  await page.goto("/#/loans", { waitUntil: "networkidle" });
+  const home = page.getByRole("button", { name: "Morrow Archive home" });
+
+  await expect(home).toBeVisible();
+  await expect(home.locator(".morrow-mark")).toHaveCount(1);
+  await expect(home).toHaveCSS("min-height", "44px");
+  await home.click();
+  await expect(page).toHaveURL(/#\/$/);
+  await expect(page.getByRole("heading", { name: "Measures of distance" })).toBeVisible();
+});
+
 test("exhibition CTA is separated from its accordion", async ({ page }) => {
   for (const width of [590, 390]) {
     await page.setViewportSize({ width, height: 844 });

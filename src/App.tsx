@@ -186,6 +186,30 @@ const desktopNavigation: Array<{
   },
 ];
 
+function MorrowMark() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="morrow-mark"
+      focusable="false"
+      viewBox="0 0 28 28"
+    >
+      <path
+        className="morrow-mark-outline"
+        d="M3.5 24.5V5.5H9L14 12.5L19 5.5H24.5V24.5M2.5 24.5H25.5"
+      />
+      <rect
+        className="morrow-mark-object"
+        height="7"
+        rx="0.75"
+        width="3.5"
+        x="12.25"
+        y="17.5"
+      />
+    </svg>
+  );
+}
+
 const collectionRows = [
   {
     accession: "MA.2024.018",
@@ -550,7 +574,16 @@ export function App() {
             />
           </Stack>
         }
-      />
+      >
+        <button
+          aria-label="Morrow Archive home"
+          className="brand-button"
+          onClick={() => navigate("exhibition")}
+          type="button"
+        >
+          <MorrowMark />
+        </button>
+      </AppBar>
 
       <Drawer
         open={mobileOpen}

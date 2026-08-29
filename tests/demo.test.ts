@@ -36,6 +36,14 @@ describe("Morrow Archive flagship integrity", () => {
     }
   });
 
+  it("uses a theme-aware Morrow Archive brand mark", () => {
+    expect(source).toContain("function MorrowMark()");
+    expect(source).toContain('aria-label="Morrow Archive home"');
+    expect(styles).toContain(".morrow-mark-outline");
+    expect(styles).toContain("var(--corva-color-accent-text)");
+    expect(styles).toContain("var(--corva-color-accent-strong)");
+  });
+
   it("avoids rejected visual shortcuts", () => {
     expect(styles).not.toMatch(/linear-gradient|radial-gradient|background-clip\s*:\s*text/i);
     expect(styles).not.toMatch(/border-(?:left|right)\s*:\s*[2-9]/i);
