@@ -94,6 +94,9 @@ const assetBase = window.location.pathname.startsWith("/corvaui-demo-react")
 const galleryImage = `${assetBase}images/morrow/gallery-installation.png`;
 const conservationImage = `${assetBase}images/morrow/conservation-detail.png`;
 const logisticsImage = `${assetBase}images/morrow/collections-logistics.png`;
+const elenaPortrait = `${assetBase}images/morrow/elena-ruiz.webp`;
+const aminaPortrait = `${assetBase}images/morrow/amina-morrow.webp`;
+const jonPortrait = `${assetBase}images/morrow/jon-bell.webp`;
 
 const routes: Array<{
   id: RouteId;
@@ -798,6 +801,7 @@ function ExhibitionPage({ navigate, showMessage }: PageProps) {
                   quote="The register gives us a way to see the exhibition changing before the doors open."
                   person="Elena Ruiz"
                   role="Curator of modern collections"
+                  image={elenaPortrait}
                 />
               ),
             },
@@ -809,6 +813,7 @@ function ExhibitionPage({ navigate, showMessage }: PageProps) {
                   quote="Every request, certificate, and handoff sits beside the object it protects."
                   person="Amina Morrow"
                   role="Senior registrar"
+                  image={aminaPortrait}
                 />
               ),
             },
@@ -820,6 +825,7 @@ function ExhibitionPage({ navigate, showMessage }: PageProps) {
                   quote="Condition evidence stays useful because the context never falls away."
                   person="Jon Bell"
                   role="Paintings conservator"
+                  image={jonPortrait}
                 />
               ),
             },
@@ -2634,17 +2640,22 @@ function QuoteBlock({
   quote,
   person,
   role,
+  image,
 }: {
   quote: string;
   person: string;
   role: string;
+  image: string;
 }) {
   return (
     <blockquote className="quote-block">
       <Typography variant="subtitle">“{quote}”</Typography>
       <footer>
-        <strong>{person}</strong>
-        <span>{role}</span>
+        <img src={image} alt={`${person}, ${role}`} loading="lazy" />
+        <div>
+          <strong>{person}</strong>
+          <span>{role}</span>
+        </div>
       </footer>
     </blockquote>
   );

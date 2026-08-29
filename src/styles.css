@@ -387,6 +387,21 @@ h3 {
 
 .quote-block footer {
   display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: var(--corva-space-1);
+  align-items: center;
+}
+
+.quote-block footer img {
+  width: 3.5rem;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border: 1px solid var(--corva-color-border);
+  border-radius: 50%;
+}
+
+.quote-block footer div {
+  display: grid;
   gap: var(--corva-space-1);
 }
 

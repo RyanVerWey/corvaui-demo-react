@@ -134,6 +134,19 @@ test("exhibition CTA is separated from its accordion", async ({ page }) => {
   }
 });
 
+test("carousel perspectives pair each person with a portrait", async ({ page }) => {
+  await page.setViewportSize({ width: 590, height: 844 });
+  await page.goto("/#/", { waitUntil: "networkidle" });
+  for (const person of ["Elena Ruiz", "Amina Morrow", "Jon Bell"]) {
+    const portrait = page.getByRole("img", { name: new RegExp(`^${person},`) });
+    await expect(portrait).toBeVisible();
+    await expect(portrait).toHaveJSProperty("complete", true);
+    if (person !== "Jon Bell") {
+      await page.getByRole("button", { name: "Next" }).click();
+    }
+  }
+});
+
 test("mobile navigation and touch workflow remain usable", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/#/overview", { waitUntil: "networkidle" });

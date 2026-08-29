@@ -8,5 +8,8 @@
 - `morrow/gallery-installation.png`: generated specifically for this private demo with OpenAI ImageGen on 2026-08-28.
 - `morrow/conservation-detail.png`: generated specifically for this private demo with OpenAI ImageGen on 2026-08-28.
 - `morrow/collections-logistics.png`: generated specifically for this private demo with OpenAI ImageGen on 2026-08-28.
+- `morrow/elena-ruiz.webp`: fictional curator portrait generated specifically for this private demo with OpenAI ImageGen on 2026-08-28.
+- `morrow/amina-morrow.webp`: fictional registrar portrait generated specifically for this private demo with OpenAI ImageGen on 2026-08-28.
+- `morrow/jon-bell.webp`: fictional conservator portrait generated specifically for this private demo with OpenAI ImageGen on 2026-08-28.
 
 No external stock assets or third-party artwork reproductions are used in the Morrow Archive experience.
