@@ -7,12 +7,14 @@ const coverage = readFileSync(new URL("../docs/COMPONENT-COVERAGE.md", import.me
 const packageIndex = readFileSync(new URL("../node_modules/@corvaui/react/src/index.ts", import.meta.url), "utf8");
 const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
 
-const publicComponents = [...packageIndex.matchAll(/components\/(?:atoms|molecules|organisms)\/([^\"]+)/g)].map((match) => match[1]);
+const publicComponents = [...packageIndex.matchAll(/components\/(?:atoms|molecules|organisms)\/([^\"]+)/g)].map((match) =>
+  match[1].replace(/\.js$/, ""),
+);
 
 describe("Morrow Archive flagship integrity", () => {
   it("uses the published CorvaUI packages and unchanged Concept themes", () => {
-    expect(pkg.dependencies["@corvaui/react"]).toBe("^0.1.7");
-    expect(pkg.dependencies["@corvaui/tokens"]).toBe("^0.1.7");
+    expect(pkg.dependencies["@corvaui/react"]).toBe("^0.1.8");
+    expect(pkg.dependencies["@corvaui/tokens"]).toBe("^0.1.8");
     expect(source).toContain("concept-light");
     expect(source).toContain("concept-dark");
     expect(styles).not.toMatch(/--corva-color-[\w-]+\s*:/);

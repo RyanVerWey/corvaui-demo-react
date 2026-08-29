@@ -446,6 +446,39 @@ test("loan register and pipeline adapt to desktop and mobile", async ({ page }) 
   await expectNoPageOverflow(page);
 });
 
+test("Concept Dark loan cards retain near-black surface layers", async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem("morrow-theme", "dark");
+  });
+  await page.goto("/#/loans", { waitUntil: "networkidle" });
+
+  const colors = await page.evaluate(() => {
+    const root = getComputedStyle(document.documentElement);
+    const column = document.querySelector<HTMLElement>(
+      ".desktop-loan-pipeline .corva-workflow-column",
+    );
+    const card = document.querySelector<HTMLElement>(
+      ".desktop-loan-pipeline .corva-workflow-item",
+    );
+
+    return {
+      theme: document.documentElement.dataset.corvaTheme,
+      surface: root.getPropertyValue("--corva-color-surface").trim(),
+      subtle: root.getPropertyValue("--corva-color-subtle").trim(),
+      column: column ? getComputedStyle(column).backgroundColor : null,
+      card: card ? getComputedStyle(card).backgroundColor : null,
+    };
+  });
+
+  expect(colors).toEqual({
+    theme: "concept-dark",
+    surface: "#02090B",
+    subtle: "#061216",
+    column: "rgb(6, 18, 22)",
+    card: "rgb(2, 9, 11)",
+  });
+});
+
 test("loading, error, disabled, and validation states are complete", async ({
   page,
 }) => {

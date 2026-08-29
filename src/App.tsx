@@ -624,7 +624,7 @@ export function App() {
                     ))}
                   </nav>
                   <Typography variant="caption">
-                    Concept theme · v0.1.7
+                    Concept theme · v0.1.8
                   </Typography>
                 </div>
               }
@@ -2790,7 +2790,7 @@ function ProofPage({ showMessage }: PageProps) {
       description="The showcase uses the published React package and published Concept theme without redefining component colors or design-system tokens."
     >
       <Alert tone="success" title="Package integration verified">
-        @corvaui/react 0.1.7 and @corvaui/tokens 0.1.7 are the only visual
+        @corvaui/react 0.1.8 and @corvaui/tokens 0.1.8 are the only visual
         system packages used by this demo.
       </Alert>
       <Tabs
