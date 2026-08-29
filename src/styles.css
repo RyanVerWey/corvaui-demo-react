@@ -845,6 +845,55 @@ h3 {
     height: 100%;
   }
 
+  .desktop-sidebar-shell > .corva-sidebar {
+    width: 100%;
+    min-height: 0;
+    padding: var(--corva-space-4) var(--corva-space-3);
+    border-width: 0 1px 0 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .desktop-sidebar-shell .corva-sidebar-header {
+    padding: var(--corva-space-2) var(--corva-space-3) var(--corva-space-4);
+  }
+
+  .desktop-sidebar-shell .corva-sidebar-nav {
+    align-content: start;
+    grid-auto-rows: max-content;
+    gap: var(--corva-space-1);
+  }
+
+  .desktop-sidebar-shell .corva-sidebar-item {
+    min-height: 2.75rem;
+  }
+
+  .desktop-sidebar-shell .corva-sidebar-footer {
+    padding: var(--corva-space-4) var(--corva-space-2) var(--corva-space-2);
+    border-top: 1px solid var(--corva-color-border);
+  }
+
+  .desktop-sidebar-footer,
+  .sidebar-utility-nav {
+    display: grid;
+  }
+
+  .desktop-sidebar-footer {
+    gap: var(--corva-space-3);
+  }
+
+  .sidebar-utility-nav {
+    gap: var(--corva-space-1);
+  }
+
+  .sidebar-section-label {
+    color: var(--corva-color-muted);
+    font-size: var(--corva-font-size-xs);
+    font-weight: var(--corva-font-weight-bold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
   .page-frame {
     padding: var(--corva-space-6)
       clamp(var(--corva-space-6), 4vw, var(--corva-space-12))

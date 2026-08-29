@@ -465,6 +465,12 @@ export function App() {
 
   const current = routes.find((item) => item.id === route) ?? routes[0];
   const appRoutes = routes.filter((item) => item.id !== "exhibition");
+  const primaryAppRoutes = appRoutes.filter(
+    (item) => item.id !== "settings" && item.id !== "proof",
+  );
+  const utilityAppRoutes = appRoutes.filter(
+    (item) => item.id === "settings" || item.id === "proof",
+  );
 
   return (
     <div className="app-root" data-corva-theme={theme}>
@@ -583,7 +589,7 @@ export function App() {
               activeId={route}
               heading="Morrow operations"
               label="Product routes"
-              items={appRoutes.map((item) => ({
+              items={primaryAppRoutes.map((item) => ({
                 id: item.id,
                 label: item.label,
                 icon: item.icon,
@@ -594,18 +600,33 @@ export function App() {
               }))}
               onSelect={(id) => navigate(id as RouteId)}
               footer={
-                <Stack gap="sm">
+                <div className="desktop-sidebar-footer">
+                  <span className="sidebar-section-label">Institution</span>
+                  <nav
+                    className="sidebar-utility-nav"
+                    aria-label="Institution routes"
+                  >
+                    {utilityAppRoutes.map((item) => (
+                      <button
+                        aria-current={route === item.id ? "page" : undefined}
+                        className={`corva-sidebar-item${
+                          route === item.id ? " corva-sidebar-item-active" : ""
+                        }`}
+                        key={item.id}
+                        onClick={() => navigate(item.id)}
+                        type="button"
+                      >
+                        <span className="corva-sidebar-icon" aria-hidden="true">
+                          {item.icon}
+                        </span>
+                        <span className="corva-sidebar-label">{item.label}</span>
+                      </button>
+                    ))}
+                  </nav>
                   <Typography variant="caption">
                     Concept theme · v0.1.7
                   </Typography>
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    onClick={() => navigate("exhibition")}
-                  >
-                    View exhibition
-                  </Button>
-                </Stack>
+                </div>
               }
             />
           </aside>

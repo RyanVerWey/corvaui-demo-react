@@ -205,6 +205,37 @@ test("desktop navigation uses grouped dropdown menus", async ({ page }) => {
   await expectNoPageOverflow(page);
 });
 
+test("desktop workspace navigation remains compact and grouped", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await page.goto("/#/calendar", { waitUntil: "networkidle" });
+
+  const sidebar = page.locator(".desktop-sidebar-shell");
+  const primaryNavigation = sidebar.getByRole("navigation", {
+    name: "Product routes",
+  });
+  const primaryItems = primaryNavigation.getByRole("button");
+  const utilityItems = sidebar
+    .getByRole("navigation", { name: "Institution routes" })
+    .getByRole("button");
+
+  await expect(primaryItems).toHaveCount(5);
+  await expect(utilityItems).toHaveCount(2);
+  await expect(sidebar.getByText("Institution", { exact: true })).toBeVisible();
+  await expect(
+    primaryNavigation.getByRole("button", {
+      name: "Installation calendar",
+    }),
+  ).toHaveAttribute("aria-current", "page");
+
+  const itemHeights = await primaryItems.evaluateAll((items) =>
+    items.map((item) => Math.round(item.getBoundingClientRect().height)),
+  );
+  expect(itemHeights.every((height) => height <= 48)).toBe(true);
+  await expectNoPageOverflow(page);
+});
+
 test("mobile navigation and touch workflow remain usable", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/#/overview", { waitUntil: "networkidle" });
