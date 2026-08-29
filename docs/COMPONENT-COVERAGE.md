@@ -59,7 +59,7 @@ Audit source: published `@corvaui/react` version `0.1.7`, inspected from its pub
 | SpeedDial            | Mobile evidence creation actions                                                                                 |
 | Spinner              | Bounded save/sync progress                                                                                       |
 | Stack                | Component composition and action alignment                                                                       |
-| Stepper              | Loan request progression                                                                                         |
+| Stepper              | Progressive four-stage loan dossier review                                                                       |
 | Switch               | Theme and workspace preferences                                                                                  |
 | Tabs                 | Record details, evidence, activity, and proof views                                                              |
 | Textarea             | Condition, courier, and policy notes                                                                             |
@@ -72,7 +72,7 @@ Audit source: published `@corvaui/react` version `0.1.7`, inspected from its pub
 | TransferList         | Team access and exhibition assignment                                                                            |
 | TreeView             | Collection and location hierarchy                                                                                |
 | Typography           | Semantic display, heading, body, and metadata text                                                               |
-| WorkflowBoard        | Loan pipeline and installation workflow                                                                          |
+| WorkflowBoard        | Three-stage institutional loan pipeline                                                                           |
 
 ## Summary
 

@@ -8,7 +8,7 @@ const routes = [
   ["exhibition", "/#/", "Measures of distance"],
   ["overview", "/#/overview", "Today across Morrow"],
   ["collection", "/#/collection", "The collection register"],
-  ["loans", "/#/loans", "Move work without losing trust"],
+  ["loans", "/#/loans", "Loan operations"],
   ["conservation", "/#/conservation", "Mountain Valley, 1867"],
   ["calendar", "/#/calendar", "Installation calendar"],
   ["settings", "/#/settings", "Institution settings"],
@@ -272,7 +272,7 @@ test("mobile navigation and touch workflow remain usable", async ({ page }) => {
   await page.getByRole("button", { name: "Loans", exact: true }).last().click();
   await expect(page).toHaveURL(/#\/loans$/);
   await expect(
-    page.getByRole("button", { name: "Create a new record" }),
+    page.getByRole("button", { name: "Review LN-2468" }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Open navigation" }).click();
   await page.getByRole("button", { name: /Institution settings/ }).click();
@@ -368,6 +368,82 @@ test("loan approval dialog supports keyboard dismissal and success", async ({
   await page.getByRole("button", { name: "Review approval" }).click();
   await page.getByRole("button", { name: "Approve incoming loan" }).click();
   await expect(page.getByText("Incoming loan approved.")).toBeVisible();
+});
+
+test("loan dossier reveals one review stage at a time", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/#/loans", { waitUntil: "networkidle" });
+
+  await expect(
+    page.getByRole("heading", { name: "Object and lender" }),
+  ).toBeVisible();
+  await expect(page.getByLabel("Requested arrival")).toHaveCount(0);
+  const dossierActions = page.getByRole("toolbar", {
+    name: "Loan request actions",
+  });
+
+  await dossierActions.getByRole("button", { name: /^Next/ }).click();
+  await expect(
+    page.getByRole("heading", { name: "Schedule and movement" }),
+  ).toBeVisible();
+  await expect(page.getByLabel("Requested arrival")).toBeVisible();
+
+  await dossierActions.getByRole("button", { name: /^Next/ }).click();
+  await expect(
+    page.getByRole("heading", { name: "Risk and requirements" }),
+  ).toBeVisible();
+  await expect(page.getByText("facility-report.pdf")).toBeVisible();
+
+  await dossierActions.getByRole("button", { name: /^Next/ }).click();
+  await expect(
+    page.getByRole("heading", { name: "Team and approval" }),
+  ).toBeVisible();
+  await expect(page.getByText("Assigned to LN-2468")).toBeVisible();
+  await expect(
+    dossierActions.getByRole("button", { name: /^Next/ }),
+  ).toBeDisabled();
+});
+
+test("loan register and pipeline adapt to desktop and mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/#/loans", { waitUntil: "networkidle" });
+  await expect(page.locator(".desktop-loan-register")).toBeVisible();
+  await expect(page.locator(".mobile-loan-register")).toBeHidden();
+  await page.getByRole("button", { name: "Incoming" }).click();
+  await expect(page.locator(".desktop-loan-register")).toContainText(
+    "Mountain Valley",
+  );
+  await expect(page.locator(".desktop-loan-register")).not.toContainText(
+    "Signal Field",
+  );
+  const columns = page.locator(
+    ".desktop-loan-pipeline .corva-workflow-column",
+  );
+  await expect(columns).toHaveCount(3);
+  const columnTops = await columns.evaluateAll((items) =>
+    items.map((item) => Math.round(item.getBoundingClientRect().top)),
+  );
+  expect(new Set(columnTops).size).toBe(1);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.reload({ waitUntil: "networkidle" });
+  await expect(page.locator(".desktop-loan-register")).toBeHidden();
+  await expect(page.locator(".mobile-loan-register")).toBeVisible();
+  await expect(page.locator(".desktop-loan-pipeline")).toBeHidden();
+  await expect(page.locator(".mobile-loan-pipeline")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Create a new record" }),
+  ).toHaveCount(0);
+  await page.getByRole("button", { name: "Quick actions" }).click();
+  await expect(
+    page.getByRole("button", { name: "Add courier note" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Add courier note" }).click();
+  await expect(
+    page.getByRole("button", { name: "Add courier note" }),
+  ).toHaveCount(0);
+  await expect(page.getByText("Courier note added.")).toBeVisible();
+  await expectNoPageOverflow(page);
 });
 
 test("loading, error, disabled, and validation states are complete", async ({

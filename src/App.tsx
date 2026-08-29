@@ -690,7 +690,7 @@ export function App() {
           onChange={(id) => navigate(id as RouteId)}
         />
       )}
-      {(route === "collection" || route === "loans") && (
+      {route === "collection" && (
         <FloatingActionButton
           className="mobile-fab"
           size="md"
@@ -1615,224 +1615,584 @@ function LoansPage({ showMessage }: PageProps) {
   const [speedOpen, setSpeedOpen] = React.useState(false);
   const [transport, setTransport] = React.useState("dedicated");
   const [rating, setRating] = React.useState(3);
+  const [scope, setScope] = React.useState("active");
   const closeApprovalDialog = React.useCallback(() => setDialogOpen(false), []);
   useEscape(closeApprovalDialog, dialogOpen);
+
   const board = [
     {
-      id: "request",
-      title: "Requested",
+      id: "intake",
+      title: "Intake",
       items: [
-        { id: "l1", title: "Coastal Measure", meta: "Ridge Museum · 22 Oct" },
-        {
-          id: "l2",
-          title: "Night Geometry",
-          meta: "Aster Foundation · 02 Nov",
-        },
+        { id: "l1", title: "Coastal Measure", meta: "Request · 22 Oct" },
+        { id: "l2", title: "Night Geometry", meta: "Facility review · 02 Nov" },
       ],
     },
     {
       id: "review",
-      title: "Under review",
+      title: "Terms and review",
       items: [
         { id: "l3", title: "Mountain Valley", meta: "Condition report due" },
-        { id: "l4", title: "Study in Ochre", meta: "Insurance valuation" },
+        { id: "l4", title: "Study in Ochre", meta: "Valuation outstanding" },
       ],
     },
     {
-      id: "approved",
-      title: "Approved",
-      items: [{ id: "l5", title: "River Index", meta: "Courier confirmed" }],
-    },
-    {
-      id: "packing",
-      title: "Packing",
-      items: [{ id: "l6", title: "Signal Field", meta: "Crate 14 · Bay 3" }],
+      id: "movement",
+      title: "Movement",
+      items: [
+        { id: "l5", title: "Signal Field", meta: "Packing · Bay 3" },
+        { id: "l6", title: "River Index", meta: "Courier confirmed" },
+      ],
     },
   ];
+
+  const stepTitles = [
+    "Object and lender",
+    "Schedule and movement",
+    "Risk and requirements",
+    "Team and approval",
+  ];
+  const visibleLoans =
+    scope === "incoming"
+      ? loanRows.filter((row) => row.destination === "Morrow Archive")
+      : scope === "outgoing"
+        ? loanRows.filter((row) => row.destination !== "Morrow Archive")
+        : loanRows;
+  const openDossier = (nextStep: number) => {
+    setStep(nextStep);
+    window.setTimeout(
+      () =>
+        document
+          .getElementById("loan-dossier")
+          ?.scrollIntoView({ block: "start" }),
+      0,
+    );
+  };
+
   return (
     <PageFrame
-      route="Loans / Active pipeline"
-      title="Move work without losing trust"
-      description="Coordinate request, review, insurance, conservation, packing, transport, and return evidence across institutions."
+      route="Loans"
+      title="Loan operations"
+      description="Track institutional commitments, movement readiness, and object risk from first request through safe return."
     >
-      <Alert tone="warning" title="Three loan actions need attention">
-        Mountain Valley requires a condition report, Signal Field needs crate
-        approval, and the North Window courier is still unconfirmed.
-      </Alert>
       <Toolbar
-        label="Loan workflow controls"
+        className="loan-command-bar"
+        label="Loan command controls"
         density="compact"
-        actions={<Button onClick={() => setStep(1)}>New loan request</Button>}
+        actions={
+          <div className="loan-command-actions">
+            <Button
+              variant="secondary"
+              onClick={() => setSpeedOpen((value) => !value)}
+            >
+              <Icon name="bolt" />
+              {speedOpen ? "Close actions" : "Quick actions"}
+            </Button>
+            <SpeedDial
+              className="loan-speed-dial"
+              open={speedOpen}
+              label="Loan quick actions"
+              actions={[
+                {
+                  id: "note",
+                  label: "Add courier note",
+                  icon: <Icon name="comment" />,
+                  onSelect: () => {
+                    setSpeedOpen(false);
+                    showMessage("Courier note added.");
+                  },
+                },
+                {
+                  id: "photo",
+                  label: "Add condition photo",
+                  icon: <Icon name="scan" />,
+                  onSelect: () => {
+                    setSpeedOpen(false);
+                    showMessage("Photo capture opened.", "info");
+                  },
+                },
+                {
+                  id: "certificate",
+                  label: "Request certificate",
+                  icon: <Icon name="fileData" />,
+                  onSelect: () => {
+                    setSpeedOpen(false);
+                    showMessage("Certificate request sent.");
+                  },
+                },
+                {
+                  id: "delete",
+                  label: "Delete loan",
+                  icon: <Icon name="delete" />,
+                  disabled: true,
+                },
+              ]}
+            />
+            <Button onClick={() => openDossier(1)}>
+              Review LN-2468
+              <Icon name="arrowRight" />
+            </Button>
+          </div>
+        }
       >
         <ToggleGroup
-          label="Loan board scope"
-          value="active"
+          label="Loan register scope"
+          value={scope}
           options={[
             { label: "Active", value: "active" },
             { label: "Incoming", value: "incoming" },
             { label: "Outgoing", value: "outgoing" },
           ]}
-          onValueChange={() => undefined}
+          onValueChange={setScope}
         />
       </Toolbar>
-      <div
-        className="workflow-scroll"
-        role="region"
-        aria-label="Loan workflow board, horizontally scrollable"
-      >
-        <WorkflowBoard columns={board} />
+
+      <section className="loan-metric-strip" aria-label="Loan status summary">
+        <div className="loan-metric">
+          <span>Open loans</span>
+          <strong>14</strong>
+          <small>6 incoming · 8 outgoing</small>
+        </div>
+        <div className="loan-metric">
+          <span>Moving in 14 days</span>
+          <strong>5</strong>
+          <small>Three couriers confirmed</small>
+        </div>
+        <div className="loan-metric">
+          <span>Attention required</span>
+          <strong>3</strong>
+          <small>One blocks approval</small>
+        </div>
+        <div className="loan-metric">
+          <span>Insured value</span>
+          <strong>$18.6M</strong>
+          <small>Across active commitments</small>
+        </div>
+      </section>
+
+      <div className="loan-briefing-grid">
+        <section className="loan-movement-desk" aria-labelledby="movement-title">
+          <div className="panel-title-row">
+            <div>
+              <span className="eyebrow">Movement desk · 28 August</span>
+              <Typography id="movement-title" as="h2" variant="title">
+                What needs a registrar today
+              </Typography>
+            </div>
+            <Badge tone="warning">3 actions</Badge>
+          </div>
+          <div className="loan-movement-list">
+            <article className="loan-movement-row">
+              <time dateTime="2026-08-28T11:00">11:00</time>
+              <div>
+                <strong>Approve crate specification · Signal Field</strong>
+                <span>LN-2481 · Outgoing to Kunsthalle Nord</span>
+              </div>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => showMessage("Crate specification opened.", "info")}
+              >
+                Review
+              </Button>
+            </article>
+            <article className="loan-movement-row">
+              <time dateTime="2026-08-28T14:30">14:30</time>
+              <div>
+                <strong>Confirm courier route · North Window</strong>
+                <span>LN-2432 · Response overdue by three hours</span>
+              </div>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => showMessage("Courier contacted.")}
+              >
+                Contact
+              </Button>
+            </article>
+            <article className="loan-movement-row">
+              <time dateTime="2026-08-28T17:00">17:00</time>
+              <div>
+                <strong>Issue condition report · Mountain Valley</strong>
+                <span>LN-2468 · Required before institutional approval</span>
+              </div>
+              <Button size="sm" onClick={() => openDossier(3)}>
+                Open review
+              </Button>
+            </article>
+          </div>
+        </section>
+
+        <figure className="loan-feature">
+          <img
+            src={logisticsImage}
+            alt="Museum logistics team preparing a protected artwork crate for transport"
+          />
+          <figcaption>
+            <span className="eyebrow">Next departure · 12 September</span>
+            <Typography as="h2" variant="title">
+              Signal Field leaves for Kunsthalle Nord
+            </Typography>
+            <dl className="metadata-list">
+              <div>
+                <dt>Crate</dt>
+                <dd>14 · climate logged</dd>
+              </div>
+              <div>
+                <dt>Courier</dt>
+                <dd>Leah Sung · confirmed</dd>
+              </div>
+              <div>
+                <dt>Readiness</dt>
+                <dd>86 percent</dd>
+              </div>
+            </dl>
+          </figcaption>
+        </figure>
       </div>
+
+      <section className="section-rule" aria-labelledby="loan-register-title">
+        <div className="panel-title-row">
+          <div>
+            <span className="eyebrow">Working register</span>
+            <Typography id="loan-register-title" as="h2" variant="title">
+              Active commitments
+            </Typography>
+          </div>
+          <Badge tone="info">{visibleLoans.length} shown</Badge>
+        </div>
+        <div className="desktop-loan-register">
+          <DataGrid
+            caption="Active loan commitments"
+            rows={visibleLoans}
+            columns={loanColumns}
+            filterable
+            sortable
+            pageable
+            pageSize={4}
+          />
+        </div>
+        <div className="mobile-loan-register" aria-label="Active loan commitments">
+          {visibleLoans.slice(0, 4).map((row) => (
+            <article className="mobile-loan-record" key={row.ref}>
+              <div>
+                <span className="eyebrow">{row.ref}</span>
+                <Typography as="h3" variant="title">
+                  {row.object}
+                </Typography>
+                <span>{row.destination}</span>
+              </div>
+              <dl>
+                <div>
+                  <dt>Departure</dt>
+                  <dd>{row.depart}</dd>
+                </div>
+                <div>
+                  <dt>Risk</dt>
+                  <dd>
+                    <Badge
+                      tone={
+                        row.risk === "High"
+                          ? "danger"
+                          : row.risk === "Medium"
+                            ? "warning"
+                            : "success"
+                      }
+                    >
+                      {row.risk}
+                    </Badge>
+                  </dd>
+                </div>
+              </dl>
+              <Button
+                variant="secondary"
+                onClick={() => showMessage(`${row.ref} opened.`, "info")}
+              >
+                Open loan
+              </Button>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section-rule" aria-labelledby="pipeline-title">
+        <div className="panel-title-row">
+          <div>
+            <span className="eyebrow">Across institutions</span>
+            <Typography id="pipeline-title" as="h2" variant="title">
+              Pipeline by responsibility
+            </Typography>
+          </div>
+          <Typography variant="caption">Six records · three stages</Typography>
+        </div>
+        <div className="desktop-loan-pipeline">
+          <WorkflowBoard columns={board} />
+        </div>
+        <div className="mobile-loan-pipeline" aria-label="Loan pipeline stages">
+          {board.map((column) => (
+            <section key={column.id}>
+              <div>
+                <strong>{column.title}</strong>
+                <span>{column.items.length}</span>
+              </div>
+              {column.items.map((item) => (
+                <p key={item.id}>
+                  <strong>{item.title}</strong>
+                  <span>{item.meta}</span>
+                </p>
+              ))}
+            </section>
+          ))}
+        </div>
+      </section>
+
       <section
-        className="loan-workbench section-rule"
+        id="loan-dossier"
+        className="loan-dossier section-rule"
         aria-labelledby="request-title"
       >
-        <div className="workbench-heading">
+        <div className="loan-dossier-heading">
           <div>
-            <span className="eyebrow">Loan LN-2468</span>
+            <span className="eyebrow">Priority review · LN-2468</span>
             <Typography id="request-title" as="h2" variant="title">
-              Incoming loan request
+              Mountain Valley incoming loan
+            </Typography>
+            <Typography variant="body">
+              National Gallery of Cascadia · Requested for Measures of distance
             </Typography>
           </div>
           <Badge tone="warning">Condition review</Badge>
         </div>
+
+        <dl className="loan-dossier-summary">
+          <div>
+            <dt>Arrival</dt>
+            <dd>08 Sep 2026</dd>
+          </div>
+          <div>
+            <dt>Return</dt>
+            <dd>19 Jan 2027</dd>
+          </div>
+          <div>
+            <dt>Agreed value</dt>
+            <dd>$2.75 million</dd>
+          </div>
+          <div>
+            <dt>Owner</dt>
+            <dd>Amina Morrow</dd>
+          </div>
+        </dl>
+
         <Stepper
+          className="loan-review-stepper"
           activeIndex={step - 1}
+          aria-label="Loan review progress"
           steps={[
-            {
-              id: "object",
-              label: "Object",
-              description: "Identity and purpose",
-            },
-            {
-              id: "schedule",
-              label: "Schedule",
-              description: "Dates and courier",
-            },
-            {
-              id: "risk",
-              label: "Risk",
-              description: "Condition and insurance",
-            },
-            {
-              id: "approval",
-              label: "Approval",
-              description: "Final institutional review",
-            },
+            { id: "object", label: "Object", description: "Identity and lender" },
+            { id: "schedule", label: "Schedule", description: "Dates and route" },
+            { id: "risk", label: "Risk", description: "Condition and terms" },
+            { id: "approval", label: "Approval", description: "Team and sign-off" },
           ]}
         />
-        <div className="form-layout">
-          <div className="form-main">
-            <Grid columns="two" gap="md">
-              <Autocomplete
-                label="Object"
-                defaultValue="Mountain Valley, 1867"
-                options={[
-                  "Mountain Valley, 1867",
-                  "Signal Field, 1994",
-                  "River Index, 2008",
-                ]}
-              />
-              <TextInput
-                label="Lending institution"
-                defaultValue="National Gallery of Cascadia"
-              />
-              <DatePicker label="Requested arrival" defaultValue="2026-09-08" />
-              <DatePicker label="Return deadline" defaultValue="2027-01-19" />
-              <TimePicker
-                label="Courier arrival window"
-                defaultValue="09:30"
-                hint="Local gallery time"
-              />
-              <NumberField
-                label="Insurance value"
-                defaultValue={2750000}
-                min={0}
-                hint="USD, agreed value"
-              />
-            </Grid>
-            <RadioGroup
-              label="Transport method"
-              name="transport"
-              value={transport}
-              onValueChange={setTransport}
-              options={[
-                {
-                  label: "Dedicated art vehicle",
-                  value: "dedicated",
-                  description: "Direct route with dual-driver coverage",
-                },
-                {
-                  label: "Consolidated fine-art transport",
-                  value: "consolidated",
-                  description: "Shared climate-controlled route",
-                },
-                {
-                  label: "Air freight with courier",
-                  value: "air",
-                  description: "Courier accompanies the object",
-                },
-              ]}
-            />
-            <Textarea
-              label="Handling and display requirements"
-              defaultValue="Keep upright during all movement. Acclimatize for 12 hours before unpacking. No glazing contact."
-            />
-            <FileUpload
-              label="Loan documentation"
-              description="Attach facility report, insurance certificate, and signed request."
-              multiple
-              files={[
-                { name: "facility-report.pdf", meta: "2.4 MB · verified" },
-                {
-                  name: "insurance-certificate.pdf",
-                  meta: "640 KB · expires 19 Jan",
-                },
-              ]}
-            />
-          </div>
-          <aside className="form-aside">
-            <Paper elevation="sm">
+
+        <div className="loan-step-shell">
+          <div className="loan-step-main" aria-live="polite">
+            <div className="loan-step-heading">
+              <span className="eyebrow">Step {step} of 4</span>
               <Typography as="h3" variant="title">
-                Risk review
+                {stepTitles[step - 1]}
               </Typography>
-              <Rating
-                label="Condition risk rating"
-                value={rating}
-                onValueChange={setRating}
-              />
-              <Typography variant="caption">
-                Current rating: {rating} of 5. Requires senior conservator
-                review at 4 or above.
-              </Typography>
-              <Progress label="Request completeness" value={78} />
-            </Paper>
+            </div>
+
+            {step === 1 && (
+              <Grid columns="two" gap="md">
+                <Autocomplete
+                  label="Object"
+                  defaultValue="Mountain Valley, 1867"
+                  options={[
+                    "Mountain Valley, 1867",
+                    "Signal Field, 1994",
+                    "River Index, 2008",
+                  ]}
+                />
+                <TextInput
+                  label="Lending institution"
+                  defaultValue="National Gallery of Cascadia"
+                />
+                <TextInput
+                  label="Exhibition"
+                  defaultValue="Measures of distance"
+                />
+                <TextInput label="Lender reference" defaultValue="NGC-2026-118" />
+              </Grid>
+            )}
+
+            {step === 2 && (
+              <>
+                <Grid columns="two" gap="md">
+                  <DatePicker
+                    label="Requested arrival"
+                    defaultValue="2026-09-08"
+                  />
+                  <DatePicker
+                    label="Return deadline"
+                    defaultValue="2027-01-19"
+                  />
+                  <TimePicker
+                    label="Courier arrival window"
+                    defaultValue="09:30"
+                    hint="Local gallery time"
+                  />
+                  <TextInput
+                    label="Receiving location"
+                    defaultValue="Loading bay 2"
+                  />
+                </Grid>
+                <RadioGroup
+                  label="Transport method"
+                  name="transport"
+                  value={transport}
+                  onValueChange={setTransport}
+                  options={[
+                    {
+                      label: "Dedicated art vehicle",
+                      value: "dedicated",
+                      description: "Direct route with dual-driver coverage",
+                    },
+                    {
+                      label: "Consolidated fine-art transport",
+                      value: "consolidated",
+                      description: "Shared climate-controlled route",
+                    },
+                    {
+                      label: "Air freight with courier",
+                      value: "air",
+                      description: "Courier accompanies the object",
+                    },
+                  ]}
+                />
+              </>
+            )}
+
+            {step === 3 && (
+              <>
+                <Grid columns="two" gap="md">
+                  <NumberField
+                    label="Insurance value"
+                    defaultValue={2750000}
+                    min={0}
+                    hint="USD, agreed value"
+                  />
+                  <Rating
+                    label="Condition risk rating"
+                    value={rating}
+                    onValueChange={setRating}
+                  />
+                </Grid>
+                <Textarea
+                  label="Handling and display requirements"
+                  defaultValue="Keep upright during all movement. Acclimatize for 12 hours before unpacking. No glazing contact."
+                />
+                <FileUpload
+                  label="Loan documentation"
+                  description="Attach the facility report, insurance certificate, and signed request."
+                  multiple
+                  files={[
+                    { name: "facility-report.pdf", meta: "2.4 MB · verified" },
+                    {
+                      name: "insurance-certificate.pdf",
+                      meta: "640 KB · expires 19 Jan",
+                    },
+                  ]}
+                />
+              </>
+            )}
+
+            {step === 4 && (
+              <>
+                <Alert tone="warning" title="One approval condition remains">
+                  The initial condition report is due within two days of arrival.
+                  Approval will create that task automatically.
+                </Alert>
+                <TransferList
+                  className="loan-team-transfer"
+                  sourceTitle="Available specialists"
+                  targetTitle="Assigned to LN-2468"
+                  sourceItems={[
+                    {
+                      id: "maya",
+                      label: "Maya Ortega · registrar",
+                      selected: true,
+                    },
+                    { id: "jon", label: "Jon Bell · paintings conservation" },
+                    { id: "leah", label: "Leah Sung · courier", disabled: true },
+                  ]}
+                  targetItems={[
+                    {
+                      id: "amina",
+                      label: "Amina Morrow · lead registrar",
+                      selected: true,
+                    },
+                    {
+                      id: "milo",
+                      label: "Milo Chen · installation",
+                      selected: true,
+                    },
+                  ]}
+                  onMoveRight={() => showMessage("Selected specialist assigned.")}
+                  onMoveLeft={() => showMessage("Assignment removed.", "info")}
+                />
+              </>
+            )}
+          </div>
+
+          <aside className="loan-review-aside">
+            <Typography as="h3" variant="title">
+              Review status
+            </Typography>
+            <Progress label="Request completeness" value={78} />
+            <dl className="metadata-list">
+              <div>
+                <dt>Risk</dt>
+                <dd>{rating} of 5</dd>
+              </div>
+              <div>
+                <dt>Files</dt>
+                <dd>2 verified</dd>
+              </div>
+              <div>
+                <dt>Courier</dt>
+                <dd>Required</dd>
+              </div>
+            </dl>
             <Accordion
               items={[
                 {
                   id: "climate",
-                  title: "Climate requirements",
+                  title: "Climate envelope",
                   content:
                     "Target 50 ± 4 percent RH and 20 ± 2°C throughout transport and display.",
                 },
                 {
                   id: "security",
-                  title: "Security requirements",
+                  title: "Security terms",
                   content:
                     "Continuous courier line-of-sight from unpacking through final wall placement.",
                 },
                 {
                   id: "mount",
-                  title: "Mount and display",
+                  title: "Mount approval",
                   content:
-                    "Existing travel frame is approved. Final wall fixings require lender sign-off.",
+                    "The travel frame is approved. Final wall fixings require lender sign-off.",
                 },
               ]}
             />
           </aside>
         </div>
+
         <Toolbar
+          className="loan-step-actions"
           label="Loan request actions"
-          justify="end"
           actions={
             <ButtonGroup label="Request actions">
               <Button
@@ -1853,7 +2213,8 @@ function LoansPage({ showMessage }: PageProps) {
             disabled={step === 1}
             onClick={() => setStep((value) => Math.max(1, value - 1))}
           >
-            Previous step
+            <Icon name="arrowLeft" />
+            Previous
           </Button>
           <Button
             size="sm"
@@ -1861,89 +2222,12 @@ function LoansPage({ showMessage }: PageProps) {
             disabled={step === 4}
             onClick={() => setStep((value) => Math.min(4, value + 1))}
           >
-            Next step
+            Next
+            <Icon name="arrowRight" />
           </Button>
         </Toolbar>
       </section>
-      <section className="section-rule" aria-labelledby="loan-register-title">
-        <div className="panel-title-row">
-          <Typography id="loan-register-title" as="h2" variant="title">
-            Active loan register
-          </Typography>
-          <Badge tone="info">6 open</Badge>
-        </div>
-        <DataGrid
-          caption="Active loans"
-          rows={loanRows}
-          columns={loanColumns}
-          filterable
-          sortable
-          pageable
-          pageSize={4}
-        />
-      </section>
-      <section className="section-rule" aria-labelledby="assignment-title">
-        <Typography id="assignment-title" as="h2" variant="title">
-          Exhibition assignment
-        </Typography>
-        <TransferList
-          sourceTitle="Available specialists"
-          targetTitle="Assigned to LN-2468"
-          sourceItems={[
-            { id: "maya", label: "Maya Ortega · registrar", selected: true },
-            { id: "jon", label: "Jon Bell · paintings conservation" },
-            { id: "leah", label: "Leah Sung · courier", disabled: true },
-          ]}
-          targetItems={[
-            {
-              id: "amina",
-              label: "Amina Morrow · lead registrar",
-              selected: true,
-            },
-            { id: "milo", label: "Milo Chen · installation", selected: true },
-          ]}
-          onMoveRight={() => showMessage("Selected specialist assigned.")}
-          onMoveLeft={() => showMessage("Assignment removed.", "info")}
-        />
-      </section>
-      <div className="speed-control">
-        <Button
-          variant="secondary"
-          onClick={() => setSpeedOpen((value) => !value)}
-        >
-          {speedOpen ? "Close quick actions" : "Open quick actions"}
-        </Button>
-        <SpeedDial
-          open={speedOpen}
-          label="Loan quick actions"
-          actions={[
-            {
-              id: "note",
-              label: "Add courier note",
-              icon: <Icon name="comment" />,
-              onSelect: () => showMessage("Courier note added."),
-            },
-            {
-              id: "photo",
-              label: "Add condition photo",
-              icon: <Icon name="scan" />,
-              onSelect: () => showMessage("Photo capture opened.", "info"),
-            },
-            {
-              id: "certificate",
-              label: "Request certificate",
-              icon: <Icon name="fileData" />,
-              onSelect: () => showMessage("Certificate request sent."),
-            },
-            {
-              id: "delete",
-              label: "Delete loan",
-              icon: <Icon name="delete" />,
-              disabled: true,
-            },
-          ]}
-        />
-      </div>
+
       <Dialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
