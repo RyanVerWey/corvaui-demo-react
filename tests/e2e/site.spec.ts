@@ -147,6 +147,29 @@ test("carousel perspectives pair each person with a portrait", async ({ page }) 
   }
 });
 
+test("exhibition hero uses one immersive image field", async ({ page }) => {
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/#/", { waitUntil: "networkidle" });
+    const layout = await page.evaluate(() => {
+      const hero = document.querySelector(".exhibition-hero")!;
+      const image = document.querySelector(".hero-image")!;
+      const register = document.querySelector(".hero-register")!;
+      const heroRect = hero.getBoundingClientRect();
+      const imageRect = image.getBoundingClientRect();
+      const registerRect = register.getBoundingClientRect();
+      return {
+        imageCoversHero:
+          Math.abs(imageRect.width - heroRect.width) <= 1 &&
+          Math.abs(imageRect.height - heroRect.height) <= 1,
+        registerFollowsHero: registerRect.top >= heroRect.bottom - 1,
+      };
+    });
+    expect(layout.imageCoversHero).toBe(true);
+    expect(layout.registerFollowsHero).toBe(true);
+  }
+});
+
 test("mobile navigation and touch workflow remain usable", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/#/overview", { waitUntil: "networkidle" });

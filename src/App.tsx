@@ -678,12 +678,15 @@ function ExhibitionPage({ navigate, showMessage }: PageProps) {
             Installation view, Gallery 2 · Final alignment underway
           </figcaption>
         </figure>
-        <aside className="hero-register" aria-label="Exhibition register">
+      </section>
+      <aside className="hero-register" aria-label="Exhibition register">
+        <div className="hero-register-heading">
           <span className="eyebrow">Exhibition register</span>
           <Typography as="h2" variant="title">
             Opening 18 September
           </Typography>
-          <dl className="metadata-list">
+        </div>
+          <dl className="metadata-list hero-register-metadata">
             <div>
               <dt>Curator</dt>
               <dd>Elena Ruiz</dd>
@@ -701,6 +704,7 @@ function ExhibitionPage({ navigate, showMessage }: PageProps) {
               <dd>82 percent</dd>
             </div>
           </dl>
+        <div className="hero-register-status">
           <Progress value={82} label="Exhibition readiness" />
           <Alert tone="warning" title="Condition report due">
             Cascadia Gallery evidence is required by 17:00 today.
@@ -708,8 +712,8 @@ function ExhibitionPage({ navigate, showMessage }: PageProps) {
           <Link href="#/loans" variant="standalone">
             Review incoming loans
           </Link>
-        </aside>
-      </section>
+        </div>
+      </aside>
       <section
         className="public-register section-rule"
         aria-labelledby="register-title"
