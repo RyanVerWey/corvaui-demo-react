@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 const source = readFileSync(new URL("../src/App.tsx", import.meta.url), "utf8");
 const styles = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
 const coverage = readFileSync(new URL("../docs/COMPONENT-COVERAGE.md", import.meta.url), "utf8");
-const packageIndex = readFileSync(new URL("../node_modules/@corvaui/react/src/index.ts", import.meta.url), "utf8");
+const packageIndex = readFileSync(new URL("../node_modules/@corvaui/react/dist/index.js", import.meta.url), "utf8");
 const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
 
 const publicComponents = [...packageIndex.matchAll(/components\/(?:atoms|molecules|organisms)\/([^\"]+)/g)].map((match) =>
@@ -13,11 +13,17 @@ const publicComponents = [...packageIndex.matchAll(/components\/(?:atoms|molecul
 
 describe("Morrow Archive flagship integrity", () => {
   it("uses the published CorvaUI packages and unchanged Concept themes", () => {
-    expect(pkg.dependencies["@corvaui/react"]).toBe("^0.1.8");
-    expect(pkg.dependencies["@corvaui/tokens"]).toBe("^0.1.8");
+    expect(pkg.dependencies["@corvaui/react"]).toBe("^0.2.1");
+    expect(pkg.dependencies["@corvaui/tokens"]).toBe("^0.2.1");
     expect(source).toContain("concept-light");
     expect(source).toContain("concept-dark");
     expect(styles).not.toMatch(/--corva-color-[\w-]+\s*:/);
+  });
+
+  it("shows theme-native multi-series chart data", () => {
+    expect(source).toContain("priorWeek: 88");
+    expect(source).toContain("complete: 94");
+    expect(source).toContain("target: 90");
   });
 
   it("integrates every public React component in rendered JSX", () => {

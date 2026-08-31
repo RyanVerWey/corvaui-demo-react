@@ -12,8 +12,8 @@
     "test": "npm run test:unit && npm run build && npm run test:e2e"
   },
   "dependencies": {
-    "@corvaui/react": "^0.1.8",
-    "@corvaui/tokens": "^0.1.8",
+    "@corvaui/react": "^0.2.1",
+    "@corvaui/tokens": "^0.2.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^6.1.0",

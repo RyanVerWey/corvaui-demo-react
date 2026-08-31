@@ -1,6 +1,6 @@
 # CorvaUI React component coverage
 
-Audit source: published `@corvaui/react` version `0.1.7`, inspected from its public package index before redesign implementation.
+Audit source: published `@corvaui/react` version `0.2.1`, inspected from its public package index before redesign implementation.
 
 ## Coverage matrix
 
