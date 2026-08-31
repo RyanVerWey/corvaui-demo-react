@@ -773,7 +773,7 @@ export function App() {
                     ))}
                   </nav>
                   <Typography variant="caption">
-                    Concept theme · v0.1.8
+                    Concept theme · v0.2.1
                   </Typography>
                 </div>
               }
@@ -1258,12 +1258,17 @@ function OverviewPage({ navigate, showMessage }: PageProps) {
               </div>
               <Chart
                 label="Opening readiness by discipline"
+                series={[
+                  { key: "complete", label: "Complete", color: "var(--corva-color-chart-series-1)" },
+                  { key: "target", label: "Target", color: "var(--corva-color-chart-series-4)" },
+                  { key: "priorWeek", label: "Prior week", color: "var(--corva-color-chart-series-5)" },
+                ]}
                 data={[
-                  { label: "Registration", value: 94 },
-                  { label: "Conservation", value: 78 },
-                  { label: "Installation", value: 72 },
-                  { label: "Interpretation", value: 86 },
-                  { label: "Visitor services", value: 81 },
+                  { label: "Registration", complete: 94, target: 90, priorWeek: 88 },
+                  { label: "Conservation", complete: 78, target: 84, priorWeek: 72 },
+                  { label: "Installation", complete: 72, target: 80, priorWeek: 61 },
+                  { label: "Interpretation", complete: 86, target: 88, priorWeek: 79 },
+                  { label: "Visitor services", complete: 81, target: 85, priorWeek: 76 },
                 ]}
               />
             </div>
@@ -2941,7 +2946,7 @@ function ProofPage({ showMessage }: PageProps) {
       description="The showcase uses the published React package and published Concept theme without redefining component colors or design-system tokens."
     >
       <Alert tone="success" title="Package integration verified">
-        @corvaui/react 0.1.8 and @corvaui/tokens 0.1.8 are the only visual
+        @corvaui/react 0.2.1 and @corvaui/tokens 0.2.1 are the only visual
         system packages used by this demo.
       </Alert>
       <Tabs

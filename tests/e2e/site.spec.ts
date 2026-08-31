@@ -118,6 +118,16 @@ test("theme choice persists across reload", async ({ page }) => {
   );
 });
 
+test("report chart renders three distinct theme series", async ({ page }) => {
+  await page.goto("/#/overview", { waitUntil: "networkidle" });
+  const legend = page.getByRole("group", { name: "Opening readiness by discipline series" });
+  await expect(legend.getByRole("button")).toHaveCount(3);
+  const colors = await legend.locator(".corva-chart-swatch").evaluateAll((nodes) =>
+    nodes.map((node) => getComputedStyle(node).backgroundColor),
+  );
+  expect(new Set(colors).size).toBe(3);
+});
+
 test("app bar brand mark returns to the exhibition", async ({ page }) => {
   await page.goto("/#/loans", { waitUntil: "networkidle" });
   const home = page.getByRole("button", { name: "Morrow Archive home" });
@@ -491,10 +501,11 @@ test("loan register and pipeline adapt to desktop and mobile", async ({ page }) 
     page.getByRole("button", { name: "Create a new record" }),
   ).toHaveCount(0);
   await page.getByRole("button", { name: "Quick actions" }).click();
-  await expect(
-    page.getByRole("button", { name: "Add courier note" }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "Add courier note" }).click();
+  const courierAction = page
+    .locator(".loan-command-actions .corva-speed-dial-action")
+    .filter({ hasText: "Add courier note" });
+  await expect(courierAction).toBeVisible();
+  await courierAction.click();
   await expect(
     page.getByRole("button", { name: "Add courier note" }),
   ).toHaveCount(0);
@@ -543,7 +554,7 @@ test("loading, error, disabled, and validation states are complete", async ({
   await page.getByRole("button", { name: "Refresh" }).click();
   await expect(page.getByLabel("Loading readiness summary")).toBeVisible();
   await expect(
-    page.getByLabel("Opening readiness by discipline"),
+    page.getByRole("img", { name: "Opening readiness by discipline" }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Simulate issue" }).click();
   await expect(page.getByText("Movement feed is unavailable")).toBeVisible();
