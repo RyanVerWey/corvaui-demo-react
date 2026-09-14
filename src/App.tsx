@@ -2,58 +2,36 @@ import * as React from "react";
 import {
   Accordion,
   Alert,
-  AppBar,
-  Autocomplete,
   Avatar,
-  Backdrop,
   Badge,
-  BottomNavigation,
   Box,
-  Breadcrumbs,
   Button,
-  ButtonGroup,
   Calendar,
-  Card,
   Carousel,
   Chart,
   Checkbox,
-  Chip,
-  Container,
   DataGrid,
-  DataTable,
   DatePicker,
   Dialog,
   Divider,
   Drawer,
   EmptyState,
   FileUpload,
-  FloatingActionButton,
   Grid,
   Icon,
-  ImageList,
   Link,
-  List,
-  Masonry,
-  Menu,
   MenuBar,
   Modal,
   NumberField,
-  Pagination,
   Paper,
-  Popover,
   Progress,
   RadioGroup,
-  Rating,
   SearchForm,
   Select,
   Sidebar,
-  Skeleton,
   Slider,
   Snackbar,
-  SpeedDial,
-  Spinner,
   Stack,
-  Stepper,
   Switch,
   Tabs,
   Textarea,
@@ -62,3195 +40,423 @@ import {
   Timeline,
   ToggleGroup,
   Toolbar,
-  Tooltip,
-  TransferList,
-  TreeView,
   Typography,
   WorkflowBoard,
+  type DataGridColumn,
+  type DataGridRow,
 } from "@corvaui/react";
 
+type Route = "home" | "platform" | "industries" | "customers" | "insights" | "company" | "command";
 type ThemeMode = "light" | "dark";
-type RouteId =
-  | "exhibition"
-  | "overview"
-  | "collection"
-  | "loans"
-  | "conservation"
-  | "calendar"
-  | "settings"
-  | "proof";
-type Navigate = (route: RouteId) => void;
-type PageProps = {
-  navigate: Navigate;
-  showMessage: (
-    message: string,
-    tone?: "info" | "success" | "warning" | "danger",
-  ) => void;
-};
+type Navigate = (route: Route) => void;
 
-const assetBase = window.location.pathname.startsWith("/corvaui-demo-react")
-  ? "/corvaui-demo-react/"
-  : "/";
-const galleryImage = `${assetBase}images/morrow/gallery-installation.png`;
-const conservationImage = `${assetBase}images/morrow/conservation-detail.png`;
-const logisticsImage = `${assetBase}images/morrow/collections-logistics.png`;
-const elenaPortrait = `${assetBase}images/morrow/elena-ruiz.webp`;
-const aminaPortrait = `${assetBase}images/morrow/amina-morrow.webp`;
-const jonPortrait = `${assetBase}images/morrow/jon-bell.webp`;
-
-const routes: Array<{
-  id: RouteId;
-  label: string;
-  shortLabel: string;
-  icon: React.ReactNode;
-}> = [
-  {
-    id: "exhibition",
-    label: "Exhibition",
-    shortLabel: "Exhibit",
-    icon: <Icon name="presentation" />,
-  },
-  {
-    id: "overview",
-    label: "Operations",
-    shortLabel: "Today",
-    icon: <Icon name="activity" />,
-  },
-  {
-    id: "collection",
-    label: "Collection",
-    shortLabel: "Objects",
-    icon: <Icon name="database" />,
-  },
-  {
-    id: "loans",
-    label: "Loans",
-    shortLabel: "Loans",
-    icon: <Icon name="workflow" />,
-  },
-  {
-    id: "conservation",
-    label: "Conservation",
-    shortLabel: "Care",
-    icon: <Icon name="shieldCheck" />,
-  },
-  {
-    id: "calendar",
-    label: "Installation calendar",
-    shortLabel: "Schedule",
-    icon: <Icon name="calendar" />,
-  },
-  {
-    id: "settings",
-    label: "Institution settings",
-    shortLabel: "Settings",
-    icon: <Icon name="settings" />,
-  },
-  {
-    id: "proof",
-    label: "System proof",
-    shortLabel: "Proof",
-    icon: <Icon name="component" />,
-  },
+const navItems: Array<{ id: Route; label: string; icon: React.ReactNode }> = [
+  { id: "home", label: "Home", icon: <Icon name="home" /> },
+  { id: "platform", label: "Platform", icon: <Icon name="workflow" /> },
+  { id: "industries", label: "Industries", icon: <Icon name="database" /> },
+  { id: "customers", label: "Customers", icon: <Icon name="approved" /> },
+  { id: "insights", label: "Intelligence", icon: <Icon name="search" /> },
+  { id: "company", label: "Company", icon: <Icon name="help" /> },
+  { id: "command", label: "Command center", icon: <Icon name="activity" /> },
 ];
 
-const desktopNavigation: Array<{
-  id: string;
-  label: string;
-  routes: Array<{ id: RouteId; label: string }>;
-}> = [
-  {
-    id: "collections",
-    label: "Collections",
-    routes: [
-      { id: "collection", label: "Collection register" },
-      { id: "loans", label: "Loans" },
-      { id: "conservation", label: "Conservation" },
-    ],
-  },
-  {
-    id: "operations",
-    label: "Operations",
-    routes: [
-      { id: "overview", label: "Operations dashboard" },
-      { id: "calendar", label: "Installation calendar" },
-    ],
-  },
-  {
-    id: "institution",
-    label: "Institution",
-    routes: [
-      { id: "settings", label: "Institution settings" },
-      { id: "proof", label: "System proof" },
-    ],
-  },
-];
+const routeIds = new Set<Route>(navItems.map((item) => item.id));
+const deploymentBase = () => "";
+const image = (name: string) => `${deploymentBase()}/images/${name}`;
 
-function MorrowMark() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="morrow-mark"
-      focusable="false"
-      viewBox="0 0 28 28"
-    >
-      <path
-        className="morrow-mark-outline"
-        d="M3.5 24.5V5.5H9L14 12.5L19 5.5H24.5V24.5M2.5 24.5H25.5"
-      />
-      <rect
-        className="morrow-mark-object"
-        height="7"
-        rx="0.75"
-        width="3.5"
-        x="12.25"
-        y="17.5"
-      />
-    </svg>
-  );
+function readRoute(): Route {
+  const id = window.location.pathname.replace(/^\/+|\/+$/g, "") || "home";
+  return routeIds.has(id as Route) ? (id as Route) : "home";
 }
 
-function SiteFooter() {
-  const footerGroups = [
-    {
-      label: "Explore",
-      links: [
-        { href: "#/", label: "Current exhibition" },
-        { href: "#/overview", label: "Operations" },
-        { href: "#/collection", label: "Collection register" },
-        { href: "#/loans", label: "Loans" },
-      ],
-    },
-    {
-      label: "Institution",
-      links: [
-        { href: "#/conservation", label: "Conservation" },
-        { href: "#/calendar", label: "Installation calendar" },
-        { href: "#/settings", label: "Settings" },
-        { href: "#/proof", label: "System proof" },
-      ],
-    },
-  ];
-  const socialLinks = [
-    { href: "https://www.instagram.com/", label: "Instagram" },
-    { href: "https://www.linkedin.com/", label: "LinkedIn" },
-    { href: "https://www.youtube.com/", label: "YouTube" },
-  ];
-
-  return (
-    <footer className="site-footer" aria-label="Morrow Archive footer">
-      <div className="site-footer-inner">
-        <div className="site-footer-grid">
-          <section className="site-footer-brand" aria-labelledby="footer-brand-title">
-            <a className="site-footer-lockup" href="#/" aria-label="Morrow Archive home">
-              <MorrowMark />
-              <strong id="footer-brand-title">Morrow Archive</strong>
-            </a>
-            <Typography variant="body">
-              A working archive for exhibitions, collections, and the people
-              who care for them.
-            </Typography>
-            <a
-              className="site-footer-docs-link"
-              href="https://www.corvaui.com/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Built with CorvaUI
-              <Icon name="linkExternal" />
-            </a>
-          </section>
-
-          {footerGroups.map((group) => (
-            <nav aria-label={`${group.label} footer links`} key={group.label}>
-              <h2 className="site-footer-heading">{group.label}</h2>
-              <ul className="site-footer-links">
-                {group.links.map((link) => (
-                  <li key={link.href}>
-                    <a href={link.href}>{link.label}</a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
-
-          <nav aria-label="Social links">
-            <h2 className="site-footer-heading">Follow</h2>
-            <ul className="site-footer-links site-footer-socials">
-              {socialLinks.map((link) => (
-                <li key={link.href}>
-                  <a href={link.href} rel="noreferrer" target="_blank">
-                    {link.label}
-                    <span className="sr-only"> (opens in a new tab)</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
-
-        <div className="site-footer-meta">
-          <span>© 2026 Morrow Archive</span>
-          <span>Collection care, public access, and responsible stewardship.</span>
-        </div>
-      </div>
-    </footer>
-  );
+function routePath(route: Route) {
+  return route === "home" ? `${deploymentBase() || ""}/` : `${deploymentBase() || ""}/${route}`;
 }
 
-const collectionRows = [
-  {
-    accession: "MA.2024.018",
-    object: "Threshold Study III",
-    maker: "Leona Varga",
-    year: "1938",
-    medium: "Pigment and linen",
-    location: "Gallery 2",
-    status: "On view",
-  },
-  {
-    accession: "MA.2019.153",
-    object: "Mountain Valley",
-    maker: "Amara Bell",
-    year: "1867",
-    medium: "Oil on canvas",
-    location: "Conservation",
-    status: "Treatment",
-  },
-  {
-    accession: "MA.2022.044",
-    object: "Counterweight No. 6",
-    maker: "Tomas Ibarra",
-    year: "1971",
-    medium: "Carved basalt",
-    location: "Gallery 2",
-    status: "On view",
-  },
-  {
-    accession: "MA.2017.091",
-    object: "River Index",
-    maker: "Nadia Okafor",
-    year: "2008",
-    medium: "Silver gelatin print",
-    location: "Store B-14",
-    status: "Available",
-  },
-  {
-    accession: "MA.2021.207",
-    object: "Signal Field",
-    maker: "Jun Park",
-    year: "1994",
-    medium: "Painted steel",
-    location: "Outbound",
-    status: "Loan prep",
-  },
-  {
-    accession: "MA.2015.032",
-    object: "Archive for Rain",
-    maker: "Mila Sayegh",
-    year: "1982",
-    medium: "Paper and graphite",
-    location: "Study room",
-    status: "Reserved",
-  },
-  {
-    accession: "MA.2023.116",
-    object: "Listening Stone",
-    maker: "Kwame Mensah",
-    year: "2017",
-    medium: "Granite and copper",
-    location: "Gallery 1",
-    status: "On view",
-  },
-  {
-    accession: "MA.2018.064",
-    object: "Vessel for North Light",
-    maker: "Sora Lind",
-    year: "1954",
-    medium: "Glazed ceramic",
-    location: "Store C-02",
-    status: "Available",
-  },
+const assetRows: DataGridRow[] = [
+  { asset: "WTG-214", network: "North Sea Wind", class: "Turbine", health: "Watch", signal: "Gearbox vibration", owner: "Lena Ortiz", due: "Sep 03" },
+  { asset: "SUB-09", network: "Cedar Grid", class: "Substation", health: "Critical", signal: "Transformer heat", owner: "Amir Patel", due: "Today" },
+  { asset: "PMP-118", network: "River District", class: "Water", health: "Stable", signal: "Flow variance", owner: "Nora Blake", due: "Sep 08" },
+  { asset: "SIG-442", network: "Metro East", class: "Transit", health: "Watch", signal: "Relay latency", owner: "Diego Cruz", due: "Sep 04" },
+  { asset: "BRG-031", network: "Harbor Link", class: "Structure", health: "Stable", signal: "Joint movement", owner: "Mina Cho", due: "Sep 12" },
+  { asset: "SOL-822", network: "Canyon Solar", class: "Inverter", health: "Stable", signal: "Output drift", owner: "Tariq Hall", due: "Sep 18" },
+  { asset: "TRK-067", network: "Port Meridian", class: "Rail", health: "Critical", signal: "Switch current", owner: "Sofia Marin", due: "Today" },
+  { asset: "VAL-291", network: "North Aqueduct", class: "Water", health: "Watch", signal: "Pressure decay", owner: "Avery Reed", due: "Sep 06" },
+  { asset: "CRN-016", network: "Port Meridian", class: "Crane", health: "Stable", signal: "Motor cycle", owner: "Jonas Berg", due: "Sep 21" },
+  { asset: "BUS-504", network: "Metro East", class: "Transit", health: "Stable", signal: "Battery range", owner: "Leah Grant", due: "Sep 14" },
+  { asset: "DAM-004", network: "River District", class: "Hydro", health: "Watch", signal: "Spillway load", owner: "Eli Warren", due: "Sep 09" },
+  { asset: "CAB-732", network: "North Sea Wind", class: "Cable", health: "Stable", signal: "Thermal load", owner: "Rina Shah", due: "Sep 25" },
 ];
 
-const loanRows = [
+const assetColumns: DataGridColumn[] = [
+  { key: "asset", header: "Asset", sortable: true, filterable: true },
+  { key: "network", header: "Network", sortable: true, filterable: true },
+  { key: "class", header: "Class", sortable: true, filterable: true },
   {
-    ref: "LN-2481",
-    object: "Signal Field",
-    lender: "Morrow Archive",
-    destination: "Kunsthalle Nord",
-    depart: "12 Sep",
-    risk: "Medium",
-    status: "Packing",
-  },
-  {
-    ref: "LN-2476",
-    object: "River Index",
-    lender: "Morrow Archive",
-    destination: "Musée du Passage",
-    depart: "18 Sep",
-    risk: "Low",
-    status: "Approved",
-  },
-  {
-    ref: "LN-2468",
-    object: "Mountain Valley",
-    lender: "Cascadia Gallery",
-    destination: "Morrow Archive",
-    depart: "03 Oct",
-    risk: "High",
-    status: "Condition review",
-  },
-  {
-    ref: "LN-2459",
-    object: "Study in Ochre",
-    lender: "Private collection",
-    destination: "Morrow Archive",
-    depart: "11 Oct",
-    risk: "Medium",
-    status: "Insurance",
-  },
-  {
-    ref: "LN-2444",
-    object: "Coastal Measure",
-    lender: "Morrow Archive",
-    destination: "Ridge Museum",
-    depart: "22 Oct",
-    risk: "Low",
-    status: "Requested",
-  },
-  {
-    ref: "LN-2432",
-    object: "North Window",
-    lender: "Morrow Archive",
-    destination: "Aster Foundation",
-    depart: "30 Oct",
-    risk: "Medium",
-    status: "Courier hold",
-  },
-];
-
-const loanColumns = [
-  { key: "ref", header: "Reference", sortable: true, filterable: true },
-  { key: "object", header: "Object", sortable: true, filterable: true },
-  {
-    key: "destination",
-    header: "Destination",
+    key: "health",
+    header: "Health",
     sortable: true,
     filterable: true,
+    value: (row) => String(row.health),
+    render: (row) => <Badge tone={row.health === "Critical" ? "danger" : row.health === "Watch" ? "warning" : "success"}>{row.health}</Badge>,
   },
-  { key: "depart", header: "Departure", sortable: true },
-  {
-    key: "risk",
-    header: "Risk",
-    sortable: true,
-    filterable: true,
-    render: (row: Record<string, React.ReactNode>) => (
-      <Badge
-        tone={
-          row.risk === "High"
-            ? "danger"
-            : row.risk === "Medium"
-              ? "warning"
-              : "success"
-        }
-      >
-        {row.risk}
-      </Badge>
-    ),
-    value: (row: Record<string, React.ReactNode>) => String(row.risk),
-  },
-  { key: "status", header: "Status", sortable: true, filterable: true },
+  { key: "signal", header: "Leading signal", sortable: true, filterable: true },
+  { key: "owner", header: "Owner", sortable: true, filterable: true },
+  { key: "due", header: "Next action", sortable: true },
 ];
 
-const calendarDays = Array.from({ length: 35 }, (_, index) => {
-  const date = index - 1;
-  const events: Record<number, string> = {
-    3: "Courier",
-    7: "Rig",
-    12: "4",
-    16: "Light",
-    18: "VIP",
-    23: "Close",
-    27: "Return",
-  };
-  const label =
-    date === -1
-      ? "30"
-      : date === 0
-        ? "31"
-        : date === 32
-          ? "1"
-          : date === 33
-            ? "2"
-            : String(date);
-  return {
-    id: `august-${index}`,
-    label,
-    muted: date <= 0 || date > 31,
-    selected: date === 12,
-    badge: events[date],
-  };
+const workColumns = [
+  { id: "triage", title: "Triage", items: [{ id: "heat", title: "SUB-09 thermal review", meta: "Critical | 12 min" }, { id: "current", title: "TRK-067 switch inspection", meta: "Critical | Crew 14" }] },
+  { id: "active", title: "In field", items: [{ id: "wind", title: "WTG-214 vibration test", meta: "Lena Ortiz | Offshore" }, { id: "valve", title: "VAL-291 pressure test", meta: "Avery Reed | Zone 4" }] },
+  { id: "verify", title: "Verification", items: [{ id: "signal", title: "SIG-442 relay firmware", meta: "Diego Cruz | Evidence due" }, { id: "bridge", title: "BRG-031 joint survey", meta: "Mina Cho | Ready" }] },
+];
+
+const monthDays = Array.from({ length: 35 }, (_, index) => {
+  const day = index < 2 ? 30 + index : index - 1;
+  const muted = index < 2 || index > 31;
+  const badges: Record<number, string> = { 5: "Wind", 9: "Rail", 12: "Water", 18: "Grid", 24: "Port" };
+  return { id: `day-${index}`, label: day, muted, selected: day === 9 && !muted, badge: !muted ? badges[day] : undefined };
 });
 
-const coverageRows = [
-  {
-    group: "Atoms",
-    count: "30",
-    routes: "All routes",
-    status: <Badge tone="success">Covered</Badge>,
-  },
-  {
-    group: "Molecules",
-    count: "30",
-    routes: "Editorial, workflows, settings",
-    status: <Badge tone="success">Covered</Badge>,
-  },
-  {
-    group: "Organisms",
-    count: "7",
-    routes: "Collection, loans, calendar",
-    status: <Badge tone="success">Covered</Badge>,
-  },
-];
-
-function routeFromHash(): RouteId {
-  const candidate = window.location.hash.replace(/^#\/?/, "") || "exhibition";
-  return routes.some((route) => route.id === candidate)
-    ? (candidate as RouteId)
-    : "exhibition";
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return <Typography className="eyebrow" variant="caption">{children}</Typography>;
 }
 
-function useEscape(onEscape: () => void, enabled: boolean) {
-  React.useEffect(() => {
-    if (!enabled) return;
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onEscape();
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [enabled, onEscape]);
-}
-
-export function App() {
-  const [route, setRoute] = React.useState<RouteId>(() => routeFromHash());
-  const [mode, setMode] = React.useState<ThemeMode>(() =>
-    window.localStorage.getItem("morrow-theme") === "dark" ? "dark" : "light",
-  );
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [notice, setNotice] = React.useState<{
-    message: string;
-    tone: "info" | "success" | "warning" | "danger";
-  } | null>(null);
-  const theme = `concept-${mode}`;
-  const closeMobileNavigation = React.useCallback(
-    () => setMobileOpen(false),
-    [],
-  );
-  useEscape(closeMobileNavigation, mobileOpen);
-
-  React.useEffect(() => {
-    const sync = () => setRoute(routeFromHash());
-    window.addEventListener("hashchange", sync);
-    return () => window.removeEventListener("hashchange", sync);
-  }, []);
-
-  React.useEffect(() => {
-    document.documentElement.dataset.corvaTheme = theme;
-    window.localStorage.setItem("morrow-theme", mode);
-  }, [mode, theme]);
-
-  React.useEffect(() => {
-    setMobileOpen(false);
-    document.getElementById("page-title")?.focus();
-  }, [route]);
-
-  const navigate: Navigate = (next) => {
-    window.location.hash = next === "exhibition" ? "#/" : `#/${next}`;
-    setRoute(next);
-  };
-
-  const showMessage: PageProps["showMessage"] = (message, tone = "success") => {
-    setNotice({ message, tone });
-    window.setTimeout(() => setNotice(null), 4200);
-  };
-
-  const current = routes.find((item) => item.id === route) ?? routes[0];
-  const appRoutes = routes.filter((item) => item.id !== "exhibition");
-  const primaryAppRoutes = appRoutes.filter(
-    (item) => item.id !== "settings" && item.id !== "proof",
-  );
-  const utilityAppRoutes = appRoutes.filter(
-    (item) => item.id === "settings" || item.id === "proof",
-  );
-
-  return (
-    <div className="app-root" data-corva-theme={theme}>
-      <a className="skip-link" href="#main-content">
-        Skip to main content
-      </a>
-      <AppBar
-        className="global-appbar"
-        title="Morrow Archive"
-        navigation={
-          <nav className="desktop-primary-nav" aria-label="Primary navigation">
-            <button
-              className="desktop-nav-link"
-              type="button"
-              aria-current={route === "exhibition" ? "page" : undefined}
-              onClick={() => navigate("exhibition")}
-            >
-              Exhibition
-            </button>
-            {desktopNavigation.map((group) => {
-              const active = group.routes.some((item) => item.id === route);
-              return (
-                <Menu
-                  className="desktop-nav-menu"
-                  data-active={active ? "true" : "false"}
-                  key={group.id}
-                  label={
-                    <span className="desktop-nav-label">
-                      {group.label}
-                      <Icon name="chevronDown" />
-                    </span>
-                  }
-                  items={group.routes.map((item) => ({
-                    id: item.id,
-                    label: (
-                      <span className="desktop-menu-item-label">
-                        <span>{item.label}</span>
-                        {route === item.id && (
-                          <span className="sr-only"> (current page)</span>
-                        )}
-                      </span>
-                    ),
-                    onSelect: () => navigate(item.id),
-                  }))}
-                />
-              );
-            })}
-          </nav>
-        }
-        actions={
-          <Stack direction="row" gap="sm" align="center">
-            <Tooltip
-              content={`Use ${mode === "light" ? "dark" : "light"} theme`}
-            >
-              <Button
-                variant="secondary"
-                size="sm"
-                aria-label={`Use ${mode === "light" ? "dark" : "light"} theme`}
-                onClick={() => setMode(mode === "light" ? "dark" : "light")}
-              >
-                <Icon name={mode === "light" ? "visibility" : "contrast"} />
-              </Button>
-            </Tooltip>
-            <button
-              className="menu-trigger"
-              type="button"
-              onClick={() => setMobileOpen(true)}
-              aria-label="Open navigation"
-            >
-              <Icon name="menu" />
-              <span>Menu</span>
-            </button>
-            <Menu
-              className="account-menu"
-              label={
-                <span className="account-menu-label">
-                  <Avatar aria-hidden="true" initials="AM" size="sm" />
-                  <span className="account-menu-name">
-                    Amina<span className="account-menu-surname"> Morrow</span>
-                  </span>
-                  <Icon name="chevronDown" />
-                </span>
-              }
-              items={[
-                {
-                  id: "settings",
-                  label: (
-                    <span className="account-menu-item-label">
-                      <Icon name="settings" />
-                      Settings
-                    </span>
-                  ),
-                  onSelect: () => navigate("settings"),
-                },
-                {
-                  id: "logout",
-                  label: (
-                    <span className="account-menu-item-label">
-                      <Icon name="logout" />
-                      Log out
-                    </span>
-                  ),
-                },
-              ]}
-            />
-          </Stack>
-        }
-      >
-        <button
-          aria-label="Morrow Archive home"
-          className="brand-button"
-          onClick={() => navigate("exhibition")}
-          type="button"
-        >
-          <MorrowMark />
-        </button>
-      </AppBar>
-
-      <Drawer
-        open={mobileOpen}
-        onClose={() => setMobileOpen(false)}
-        title="Navigate Morrow Archive"
-        className="mobile-drawer"
-      >
-        <Sidebar
-          activeId={route}
-          heading="Workspaces"
-          label="Mobile routes"
-          items={routes.map((item) => ({
-            id: item.id,
-            label: item.label,
-            icon: item.icon,
-            badge:
-              item.id === "loans" ? <Badge tone="warning">3</Badge> : undefined,
-          }))}
-          onSelect={(id) => navigate(id as RouteId)}
-          footer={
-            <Switch
-              label="Dark theme"
-              checked={mode === "dark"}
-              onChange={() => setMode(mode === "light" ? "dark" : "light")}
-            />
-          }
-        />
-      </Drawer>
-
-      <div
-        className={route === "exhibition" ? "public-layout" : "product-layout"}
-      >
-        {route !== "exhibition" && (
-          <aside className="desktop-sidebar-shell">
-            <Sidebar
-              activeId={route}
-              heading="Morrow operations"
-              label="Product routes"
-              items={primaryAppRoutes.map((item) => ({
-                id: item.id,
-                label: item.label,
-                icon: item.icon,
-                badge:
-                  item.id === "loans" ? (
-                    <Badge tone="warning">3</Badge>
-                  ) : undefined,
-              }))}
-              onSelect={(id) => navigate(id as RouteId)}
-              footer={
-                <div className="desktop-sidebar-footer">
-                  <span className="sidebar-section-label">Institution</span>
-                  <nav
-                    className="sidebar-utility-nav"
-                    aria-label="Institution routes"
-                  >
-                    {utilityAppRoutes.map((item) => (
-                      <button
-                        aria-current={route === item.id ? "page" : undefined}
-                        className={`corva-sidebar-item${
-                          route === item.id ? " corva-sidebar-item-active" : ""
-                        }`}
-                        key={item.id}
-                        onClick={() => navigate(item.id)}
-                        type="button"
-                      >
-                        <span className="corva-sidebar-icon" aria-hidden="true">
-                          {item.icon}
-                        </span>
-                        <span className="corva-sidebar-label">{item.label}</span>
-                      </button>
-                    ))}
-                  </nav>
-                  <Typography variant="caption">
-                    Concept theme · v0.1.8
-                  </Typography>
-                </div>
-              }
-            />
-          </aside>
-        )}
-        <main
-          id="main-content"
-          className="main-content"
-          aria-label={`${current.label} page`}
-        >
-          {route === "exhibition" && (
-            <ExhibitionPage navigate={navigate} showMessage={showMessage} />
-          )}
-          {route === "overview" && (
-            <OverviewPage navigate={navigate} showMessage={showMessage} />
-          )}
-          {route === "collection" && (
-            <CollectionPage navigate={navigate} showMessage={showMessage} />
-          )}
-          {route === "loans" && (
-            <LoansPage navigate={navigate} showMessage={showMessage} />
-          )}
-          {route === "conservation" && (
-            <ConservationPage navigate={navigate} showMessage={showMessage} />
-          )}
-          {route === "calendar" && (
-            <CalendarPage navigate={navigate} showMessage={showMessage} />
-          )}
-          {route === "settings" && (
-            <SettingsPage
-              navigate={navigate}
-              showMessage={showMessage}
-              mode={mode}
-              setMode={setMode}
-            />
-          )}
-          {route === "proof" && (
-            <ProofPage navigate={navigate} showMessage={showMessage} />
-          )}
-        </main>
-      </div>
-
-      <SiteFooter />
-
-      {route !== "exhibition" && (
-        <BottomNavigation
-          className="mobile-bottom-nav"
-          activeId={route}
-          label="Primary mobile navigation"
-          items={[
-            { id: "overview", label: "Today", icon: <Icon name="activity" /> },
-            {
-              id: "collection",
-              label: "Objects",
-              icon: <Icon name="database" />,
-            },
-            { id: "loans", label: "Loans", icon: <Icon name="workflow" /> },
-            {
-              id: "calendar",
-              label: "Schedule",
-              icon: <Icon name="calendar" />,
-            },
-          ]}
-          onChange={(id) => navigate(id as RouteId)}
-        />
-      )}
-      {route === "collection" && (
-        <FloatingActionButton
-          className="mobile-fab"
-          size="md"
-          aria-label="Create a new record"
-          onClick={() => showMessage("New record workspace opened.", "info")}
-        >
-          <Icon name="add" />
-        </FloatingActionButton>
-      )}
-      <Snackbar
-        className="app-snackbar"
-        open={Boolean(notice)}
-        tone={notice?.tone}
-        action={
-          <Button size="sm" variant="secondary" onClick={() => setNotice(null)}>
-            Dismiss
-          </Button>
-        }
-      >
-        {notice?.message}
-      </Snackbar>
-    </div>
-  );
-}
-
-function ExhibitionPage({ navigate, showMessage }: PageProps) {
-  return (
-    <div className="exhibition-page">
-      <section className="exhibition-hero" aria-labelledby="page-title">
-        <div className="hero-copy">
-          <span className="eyebrow">Current exhibition · Gallery 2</span>
-          <Typography
-            id="page-title"
-            tabIndex={-1}
-            as="h1"
-            variant="display"
-            className="display-title"
-          >
-            Measures of distance
-          </Typography>
-          <Typography variant="subtitle">
-            Thirty-two works trace how artists have measured absence, migration,
-            and memory from 1938 to the present.
-          </Typography>
-          <Stack
-            direction="row"
-            gap="sm"
-            align="center"
-            className="hero-actions"
-          >
-            <Button onClick={() => navigate("overview")}>
-              Enter operations
-            </Button>
-            <Button variant="secondary" onClick={() => navigate("collection")}>
-              Explore the collection
-            </Button>
-          </Stack>
-        </div>
-        <figure className="hero-image">
-          <img
-            src={galleryImage}
-            alt="A mineral-teal museum gallery being prepared around a tall abstract stone sculpture"
-            fetchPriority="high"
-          />
-          <figcaption>
-            Installation view, Gallery 2 · Final alignment underway
-          </figcaption>
-        </figure>
-      </section>
-      <aside className="hero-register" aria-label="Exhibition register">
-        <div className="hero-register-heading">
-          <span className="eyebrow">Exhibition register</span>
-          <Typography as="h2" variant="title">
-            Opening 18 September
-          </Typography>
-        </div>
-          <dl className="metadata-list hero-register-metadata">
-            <div>
-              <dt>Curator</dt>
-              <dd>Elena Ruiz</dd>
-            </div>
-            <div>
-              <dt>Objects</dt>
-              <dd>32 confirmed</dd>
-            </div>
-            <div>
-              <dt>Loans</dt>
-              <dd>14 incoming</dd>
-            </div>
-            <div>
-              <dt>Readiness</dt>
-              <dd>82 percent</dd>
-            </div>
-          </dl>
-        <div className="hero-register-status">
-          <Progress value={82} label="Exhibition readiness" />
-          <Alert tone="warning" title="Condition report due">
-            Cascadia Gallery evidence is required by 17:00 today.
-          </Alert>
-          <Link href="#/loans" variant="standalone">
-            Review incoming loans
-          </Link>
-        </div>
-      </aside>
-      <section
-        className="public-register section-rule"
-        aria-labelledby="register-title"
-      >
-        <div className="section-heading">
-          <div>
-            <span className="eyebrow">A working exhibition</span>
-            <Typography id="register-title" as="h2" variant="title">
-              Editorial invitation meets operational evidence.
-            </Typography>
-          </div>
-          <Typography variant="body">
-            The public story and the private register share one source of truth:
-            objects, loans, people, condition history, and installation
-            decisions.
-          </Typography>
-        </div>
-        <Grid columns="three" gap="lg" className="register-facts">
-          <Box padding="lg" surface="subtle">
-            <Metric
-              label="Objects on site"
-              value="26 / 32"
-              note="Four arrivals this week"
-            />
-          </Box>
-          <Box padding="lg" surface="subtle">
-            <Metric
-              label="Critical checks"
-              value="3"
-              note="Two conservation, one rigging"
-            />
-          </Box>
-          <Box padding="lg" surface="subtle">
-            <Metric
-              label="Public programme"
-              value="11"
-              note="Talks, tours, and study sessions"
-            />
-          </Box>
-        </Grid>
-      </section>
-      <section
-        className="editorial-split section-rule"
-        aria-labelledby="story-title"
-      >
-        <div className="editorial-copy">
-          <span className="eyebrow">The exhibition story</span>
-          <Typography id="story-title" as="h2" variant="title">
-            A ledger can hold more than numbers.
-          </Typography>
-          <Typography variant="body">
-            Every movement leaves a trace: a courier note, a change in surface
-            condition, a shifted sightline, a new relationship between works.
-            Morrow Archive keeps those traces legible without flattening the
-            objects into inventory.
-          </Typography>
-          <List
-            ordered
-            items={[
-              {
-                id: "one",
-                label: "Arrival",
-                description:
-                  "Evidence and courier observations join the object record.",
-              },
-              {
-                id: "two",
-                label: "Installation",
-                description:
-                  "Rigging, light, and placement decisions become shared tasks.",
-              },
-              {
-                id: "three",
-                label: "Interpretation",
-                description:
-                  "Research and public programme connect to the same collection graph.",
-              },
-            ]}
-          />
-        </div>
-        <Carousel
-          label="Exhibition perspectives"
-          items={[
-            {
-              id: "curator",
-              label: "Curator perspective",
-              content: (
-                <QuoteBlock
-                  quote="The register gives us a way to see the exhibition changing before the doors open."
-                  person="Elena Ruiz"
-                  role="Curator of modern collections"
-                  image={elenaPortrait}
-                />
-              ),
-            },
-            {
-              id: "registrar",
-              label: "Registrar perspective",
-              content: (
-                <QuoteBlock
-                  quote="Every request, certificate, and handoff sits beside the object it protects."
-                  person="Amina Morrow"
-                  role="Senior registrar"
-                  image={aminaPortrait}
-                />
-              ),
-            },
-            {
-              id: "conservator",
-              label: "Conservator perspective",
-              content: (
-                <QuoteBlock
-                  quote="Condition evidence stays useful because the context never falls away."
-                  person="Jon Bell"
-                  role="Paintings conservator"
-                  image={jonPortrait}
-                />
-              ),
-            },
-          ]}
-        />
-      </section>
-      <section
-        className="image-led-section section-rule"
-        aria-labelledby="behind-title"
-      >
-        <figure>
-          <img
-            src={logisticsImage}
-            alt="Two museum art handlers preparing a wrapped sculpture beside a custom travel crate"
-            loading="lazy"
-          />
-        </figure>
-        <div className="image-led-copy">
-          <span className="eyebrow">Behind the exhibition</span>
-          <Typography id="behind-title" as="h2" variant="title">
-            Care is a choreography of small decisions.
-          </Typography>
-          <Typography variant="body">
-            From crate design to courier windows, the installation plan
-            translates specialist knowledge into a sequence the whole team can
-            follow.
-          </Typography>
-          <Accordion
-            items={[
-              {
-                id: "handling",
-                title: "Handling standard",
-                content:
-                  "Two trained handlers, nitrile gloves, padded lift table, and a documented pause before final placement.",
-              },
-              {
-                id: "climate",
-                title: "Climate envelope",
-                content:
-                  "Relative humidity remains between 48 and 54 percent during acclimatization and gallery installation.",
-              },
-              {
-                id: "public",
-                title: "Public access",
-                content:
-                  "Gallery 2 reopens at 10:00 on 18 September after a final overnight environmental review.",
-              },
-            ]}
-          />
-          <Button
-            className="image-led-cta"
-            onClick={() => {
-              showMessage("Behind-the-scenes visit added to your schedule.");
-              navigate("calendar");
-            }}
-          >
-            Reserve a study visit
-          </Button>
-        </div>
-      </section>
-    </div>
-  );
-}
-
-function OverviewPage({ navigate, showMessage }: PageProps) {
-  const [state, setState] = React.useState<"ready" | "loading" | "error">(
-    "ready",
-  );
-  const [popoverOpen, setPopoverOpen] = React.useState(false);
-  React.useEffect(() => {
-    if (state !== "loading") return;
-    const timer = window.setTimeout(() => setState("ready"), 900);
-    return () => window.clearTimeout(timer);
-  }, [state]);
-  return (
-    <PageFrame
-      route="Operations"
-      title="Today across Morrow"
-      description="Opening readiness, collection movement, conservation risk, and team capacity in one working view."
-    >
-      <Toolbar
-        label="Operations controls"
-        density="compact"
-        actions={
-          <ButtonGroup label="Data state controls">
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={() => setState("loading")}
-            >
-              Refresh
-            </Button>
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={() => setState("error")}
-            >
-              Simulate issue
-            </Button>
-          </ButtonGroup>
-        }
-      >
-        <Badge tone="success">Live · updated 09:42</Badge>
-        <ToggleGroup
-          label="Overview range"
-          value="week"
-          onValueChange={() => undefined}
-          options={[
-            { label: "Today", value: "day" },
-            { label: "7 days", value: "week" },
-            { label: "30 days", value: "month" },
-          ]}
-        />
-      </Toolbar>
-      {state === "error" && (
-        <Alert tone="danger" title="Movement feed is unavailable">
-          The courier service did not respond. Last confirmed movement data is
-          still shown.{" "}
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => setState("loading")}
-          >
-            Retry movement feed
-          </Button>
-        </Alert>
-      )}
-      {state === "loading" ? (
-        <Grid columns="three" gap="lg" aria-label="Refreshing operational data">
-          <Skeleton
-            variant="rectangular"
-            size="lg"
-            label="Loading readiness summary"
-          />
-          <Skeleton
-            variant="rectangular"
-            size="lg"
-            label="Loading collection movement"
-          />
-          <Skeleton
-            variant="rectangular"
-            size="lg"
-            label="Loading team workload"
-          />
-        </Grid>
-      ) : (
-        <>
-          <section className="metric-strip" aria-label="Operational summary">
-            <Metric
-              label="Opening readiness"
-              value="82%"
-              note="Up 7 points since Monday"
-            />
-            <Metric
-              label="Objects in motion"
-              value="9"
-              note="Three arrive before 16:00"
-            />
-            <Metric label="Condition actions" value="4" note="One due today" />
-            <Metric
-              label="Team capacity"
-              value="76%"
-              note="Rigging crew is at limit"
-            />
-          </section>
-          <section className="overview-grid">
-            <div className="overview-primary section-rule">
-              <div className="panel-title-row">
-                <div>
-                  <span className="eyebrow">Readiness by discipline</span>
-                  <Typography as="h2" variant="title">
-                    What moves the opening forward
-                  </Typography>
-                </div>
-                <Popover
-                  open={popoverOpen}
-                  placement="start"
-                  trigger={
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => setPopoverOpen((value) => !value)}
-                    >
-                      How calculated
-                    </Button>
-                  }
-                  content={
-                    <Typography variant="caption">
-                      Readiness combines completed tasks, passed evidence
-                      checks, and confirmed courier windows.
-                    </Typography>
-                  }
-                />
-              </div>
-              <Chart
-                label="Opening readiness by discipline"
-                data={[
-                  { label: "Registration", value: 94 },
-                  { label: "Conservation", value: 78 },
-                  { label: "Installation", value: 72 },
-                  { label: "Interpretation", value: 86 },
-                  { label: "Visitor services", value: 81 },
-                ]}
-              />
-            </div>
-            <Paper elevation="sm" className="attention-queue">
-              <div className="panel-title-row">
-                <Typography as="h2" variant="title">
-                  Attention queue
-                </Typography>
-                <Badge tone="warning">4 items</Badge>
-              </div>
-              <List
-                items={[
-                  {
-                    id: "condition",
-                    label: "Condition report · Mountain Valley",
-                    description: "Due today at 17:00",
-                    meta: (
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onClick={() => navigate("conservation")}
-                      >
-                        Open
-                      </Button>
-                    ),
-                  },
-                  {
-                    id: "courier",
-                    label: "Courier confirmation · LN-2432",
-                    description: "Response overdue by 3 hours",
-                    meta: (
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onClick={() => navigate("loans")}
-                      >
-                        Review
-                      </Button>
-                    ),
-                  },
-                  {
-                    id: "rig",
-                    label: "Rigging method · Counterweight No. 6",
-                    description: "Technical sign-off required",
-                    meta: (
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onClick={() =>
-                          showMessage("Technical review assigned to Milo Chen.")
-                        }
-                      >
-                        Assign
-                      </Button>
-                    ),
-                  },
-                ]}
-              />
-            </Paper>
-          </section>
-          <section className="overview-grid section-rule">
-            <Paper elevation="sm">
-              <div className="panel-title-row">
-                <div>
-                  <span className="eyebrow">Environment</span>
-                  <Typography as="h2" variant="title">
-                    Gallery 2 stability
-                  </Typography>
-                </div>
-                <Badge tone="success">Within range</Badge>
-              </div>
-              <Chart
-                label="Gallery 2 environment"
-                data={[
-                  { label: "Humidity", value: 51 },
-                  { label: "Temperature", value: 68 },
-                  { label: "Light exposure", value: 42 },
-                ]}
-              />
-            </Paper>
-            <div className="section-rule">
-              <span className="eyebrow">Latest movement</span>
-              <Timeline
-                events={[
-                  {
-                    id: "m1",
-                    label: "Crate 14 entered acclimatization",
-                    description: "Receiving store · Maya Ortega",
-                    meta: "09:18",
-                  },
-                  {
-                    id: "m2",
-                    label: "Signal Field cleared for packing",
-                    description: "Conservation studio · Jon Bell",
-                    meta: "08:42",
-                  },
-                  {
-                    id: "m3",
-                    label: "Courier route acknowledged",
-                    description: "Kunsthalle Nord · LN-2481",
-                    meta: "08:06",
-                  },
-                ]}
-              />
-            </div>
-          </section>
-        </>
-      )}
-    </PageFrame>
-  );
-}
-
-function CollectionPage({ showMessage }: PageProps) {
-  const [query, setQuery] = React.useState("");
-  const [activeTab, setActiveTab] = React.useState("register");
-  const [page, setPage] = React.useState(1);
-  const [modalOpen, setModalOpen] = React.useState(false);
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
-  const [syncing, setSyncing] = React.useState(false);
-  const [view, setView] = React.useState("table");
-  const closeCollectionOverlays = React.useCallback(() => {
-    setModalOpen(false);
-    setDrawerOpen(false);
-  }, []);
-  useEscape(closeCollectionOverlays, modalOpen || drawerOpen);
-  const filteredRows = collectionRows.filter((row) =>
-    `${row.accession} ${row.object} ${row.maker} ${row.status}`
-      .toLowerCase()
-      .includes(query.toLowerCase()),
-  );
-  const visibleRows = filteredRows.slice((page - 1) * 4, page * 4);
-  React.useEffect(() => {
-    if (!syncing) return;
-    const timer = window.setTimeout(() => {
-      setSyncing(false);
-      showMessage("Collection records synchronized.");
-    }, 1000);
-    return () => window.clearTimeout(timer);
-  }, [showMessage, syncing]);
-  return (
-    <PageFrame
-      route="Collection / Register"
-      title="The collection register"
-      description="Search, locate, compare, and act on collection records without losing their material and institutional context."
-    >
-      <Toolbar
-        label="Collection tools"
-        density="compact"
-        actions={
-          <ButtonGroup label="Collection actions">
-            <Button size="sm" onClick={() => setDrawerOpen(true)}>
-              Create object
-            </Button>
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={() => setSyncing(true)}
-            >
-              Synchronize
-            </Button>
-          </ButtonGroup>
-        }
-      >
-        <SearchForm
-          className="collection-search"
-          label="Search collection"
-          placeholder="Object, maker, accession, or status"
-          submitLabel="Find objects"
-          onSubmit={(value) => {
-            setQuery(value);
-            setPage(1);
-          }}
-        />
-      </Toolbar>
-      <div className="filter-row" aria-label="Active collection filters">
-        <Chip selected>Modern collection</Chip>
-        <Chip>On view</Chip>
-        <Chip>Loan eligible</Chip>
-        <Chip>Needs photography</Chip>
-        <ToggleGroup
-          label="Collection view"
-          value={view}
-          onValueChange={setView}
-          options={[
-            { label: "Register", value: "table" },
-            { label: "Images", value: "images" },
-          ]}
-        />
-      </div>
-      <Tabs
-        activeId={activeTab}
-        onChange={setActiveTab}
-        label="Collection workspace"
-        items={[
-          { id: "register", label: "Register" },
-          { id: "hierarchy", label: "Hierarchy" },
-          { id: "saved", label: "Saved views" },
-        ]}
-      />
-      {activeTab === "register" && filteredRows.length === 0 && (
-        <EmptyState
-          align="start"
-          icon={<Icon name="folderSearch" size="lg" />}
-          title="No collection records match this search"
-          description={`Nothing matches “${query}”. Clear the search or broaden the active taxonomy.`}
-          action={<Button onClick={() => setQuery("")}>Clear search</Button>}
-          secondaryAction={
-            <Button
-              variant="secondary"
-              onClick={() =>
-                showMessage("A saved-search draft was created.", "info")
-              }
-            >
-              Save this search
-            </Button>
-          }
-        />
-      )}
-      {activeTab === "register" &&
-        filteredRows.length > 0 &&
-        view === "table" && (
-          <>
-            <div className="desktop-records">
-              <DataTable
-                caption="Collection objects"
-                columns={[
-                  { key: "accession", header: "Accession" },
-                  { key: "object", header: "Object" },
-                  { key: "maker", header: "Maker" },
-                  { key: "year", header: "Year" },
-                  { key: "medium", header: "Medium" },
-                  { key: "location", header: "Location" },
-                  { key: "status", header: "Status" },
-                  { key: "actions", header: "Actions" },
-                ]}
-                rows={visibleRows.map((row) => ({
-                  ...row,
-                  status: (
-                    <Badge
-                      tone={
-                        row.status === "Treatment"
-                          ? "warning"
-                          : row.status === "On view"
-                            ? "success"
-                            : "neutral"
-                      }
-                    >
-                      {row.status}
-                    </Badge>
-                  ),
-                  actions: (
-                    <Menu
-                      label={
-                        <>
-                          <Icon name="moreHorizontal" />
-                          <span className="sr-only">
-                            Actions for {row.object}
-                          </span>
-                        </>
-                      }
-                      items={[
-                        {
-                          id: "view",
-                          label: "Quick view",
-                          onSelect: () => setModalOpen(true),
-                        },
-                        {
-                          id: "history",
-                          label: "Open history",
-                          onSelect: () => setDrawerOpen(true),
-                        },
-                        {
-                          id: "loan",
-                          label: "Start loan request",
-                          onSelect: () =>
-                            showMessage(
-                              `Loan request started for ${row.object}.`,
-                              "info",
-                            ),
-                        },
-                        {
-                          id: "delete",
-                          label: "Delete record",
-                          disabled: true,
-                        },
-                      ]}
-                    />
-                  ),
-                }))}
-              />
-            </div>
-            <div
-              className="mobile-records"
-              aria-label="Collection objects, compact view"
-            >
-              {visibleRows.map((row) => (
-                <CompactRecord
-                  key={row.accession}
-                  row={row}
-                  onOpen={() => setModalOpen(true)}
-                />
-              ))}
-            </div>
-            <div className="pagination-row">
-              <span>{filteredRows.length} matching objects</span>
-              <Pagination
-                page={page}
-                count={Math.max(1, Math.ceil(filteredRows.length / 4))}
-                onPageChange={setPage}
-                label="Collection pages"
-              />
-            </div>
-          </>
-        )}
-      {activeTab === "register" &&
-        filteredRows.length > 0 &&
-        view === "images" && (
-          <ImageList
-            columns="three"
-            items={[
-              {
-                src: galleryImage,
-                alt: "Tall abstract stone sculpture installed in Gallery 2",
-                caption: "Counterweight No. 6 · installation view",
-              },
-              {
-                src: conservationImage,
-                alt: "Conservator examining fine cracks in a painted surface",
-                caption: "Mountain Valley · examination detail",
-              },
-              {
-                src: logisticsImage,
-                alt: "Handlers preparing a wrapped sculpture for its travel crate",
-                caption: "Signal Field · outbound preparation",
-              },
-            ]}
-          />
-        )}
-      {activeTab === "hierarchy" && (
-        <div className="two-pane">
-          <TreeView
-            label="Collection hierarchy"
-            items={[
-              {
-                id: "modern",
-                label: "Modern collections",
-                children: [
-                  { id: "painting", label: "Painting · 412" },
-                  { id: "sculpture", label: "Sculpture · 183" },
-                  { id: "works-paper", label: "Works on paper · 687" },
-                ],
-              },
-              {
-                id: "contemporary",
-                label: "Contemporary collections",
-                children: [
-                  { id: "installation", label: "Installation · 96" },
-                  { id: "time", label: "Time-based media · 74" },
-                ],
-              },
-              {
-                id: "archive",
-                label: "Artist archives",
-                children: [
-                  { id: "varga", label: "Leona Varga papers" },
-                  { id: "ibarra", label: "Tomas Ibarra studio archive" },
-                ],
-              },
-            ]}
-          />
-          <Paper elevation="sm">
-            <Typography as="h2" variant="title">
-              Modern collections
-            </Typography>
-            <Typography variant="body">
-              1,282 catalogued objects across five stores and three galleries.
-              Ninety-one percent have current photography.
-            </Typography>
-            <Progress label="Current photography" value={91} />
-          </Paper>
-        </div>
-      )}
-      {activeTab === "saved" && (
-        <Masonry columns="three">
-          <Card eyebrow="Registrar" title="Outgoing loans, next 60 days">
-            <Typography variant="body">
-              23 objects · six institutions · two courier holds
-            </Typography>
-          </Card>
-          <Card
-            eyebrow="Conservation"
-            title="Paintings without 2026 examination"
-          >
-            <Typography variant="body">
-              17 records ordered by light exposure and loan activity.
-            </Typography>
-          </Card>
-          <Card eyebrow="Curatorial" title="Measures of distance shortlist">
-            <Typography variant="body">
-              41 objects with research notes and image rights status.
-            </Typography>
-          </Card>
-          <Card eyebrow="Collections" title="Store B-14 location audit">
-            <Typography variant="body">
-              58 records with three shelf discrepancies to resolve.
-            </Typography>
-          </Card>
-        </Masonry>
-      )}
-      <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title="Threshold Study III"
-        description="MA.2024.018 · Leona Varga, 1938"
-        actions={
-          <>
-            <Button onClick={() => setDrawerOpen(true)}>
-              Open full record
-            </Button>
-            <Button variant="secondary" onClick={() => setModalOpen(false)}>
-              Close preview
-            </Button>
-          </>
-        }
-      >
-        <div className="modal-record">
-          <img
-            src={galleryImage}
-            alt="Threshold Study III installed in the exhibition gallery"
-          />
-          <dl className="metadata-list">
-            <div>
-              <dt>Medium</dt>
-              <dd>Pigment and linen</dd>
-            </div>
-            <div>
-              <dt>Location</dt>
-              <dd>Gallery 2, bay C</dd>
-            </div>
-            <div>
-              <dt>Condition</dt>
-              <dd>Stable, examined 26 Aug</dd>
-            </div>
-          </dl>
-        </div>
-      </Modal>
-      <Drawer
-        open={drawerOpen}
-        side="right"
-        onClose={() => setDrawerOpen(false)}
-        title="Create collection object"
-      >
-        <Stack gap="md">
-          <TextInput label="Object title" defaultValue="Untitled study" />
-          <Autocomplete
-            label="Maker"
-            options={[
-              "Leona Varga",
-              "Tomas Ibarra",
-              "Nadia Okafor",
-              "Jun Park",
-            ]}
-          />
-          <Select
-            label="Collection"
-            options={[
-              { label: "Modern collections", value: "modern" },
-              { label: "Contemporary collections", value: "contemporary" },
-            ]}
-          />
-          <Textarea
-            label="Cataloguing note"
-            hint="Record visible inscriptions, marks, and supplied context."
-          />
-          <Button
-            onClick={() => {
-              setDrawerOpen(false);
-              showMessage("Object draft created.");
-            }}
-          >
-            Create object draft
-          </Button>
-        </Stack>
-      </Drawer>
-      <Backdrop open={syncing}>
-        <Stack gap="sm" align="center">
-          <Spinner size="lg" label="Synchronizing collection records" />
-          <Typography variant="body">
-            Synchronizing collection records...
-          </Typography>
-        </Stack>
-      </Backdrop>
-    </PageFrame>
-  );
-}
-
-function LoansPage({ showMessage }: PageProps) {
-  const [step, setStep] = React.useState(1);
-  const [dialogOpen, setDialogOpen] = React.useState(false);
-  const [speedOpen, setSpeedOpen] = React.useState(false);
-  const [transport, setTransport] = React.useState("dedicated");
-  const [rating, setRating] = React.useState(3);
-  const [scope, setScope] = React.useState("active");
-  const closeApprovalDialog = React.useCallback(() => setDialogOpen(false), []);
-  useEscape(closeApprovalDialog, dialogOpen);
-
-  const board = [
-    {
-      id: "intake",
-      title: "Intake",
-      items: [
-        { id: "l1", title: "Coastal Measure", meta: "Request · 22 Oct" },
-        { id: "l2", title: "Night Geometry", meta: "Facility review · 02 Nov" },
-      ],
-    },
-    {
-      id: "review",
-      title: "Terms and review",
-      items: [
-        { id: "l3", title: "Mountain Valley", meta: "Condition report due" },
-        { id: "l4", title: "Study in Ochre", meta: "Valuation outstanding" },
-      ],
-    },
-    {
-      id: "movement",
-      title: "Movement",
-      items: [
-        { id: "l5", title: "Signal Field", meta: "Packing · Bay 3" },
-        { id: "l6", title: "River Index", meta: "Courier confirmed" },
-      ],
-    },
-  ];
-
-  const stepTitles = [
-    "Object and lender",
-    "Schedule and movement",
-    "Risk and requirements",
-    "Team and approval",
-  ];
-  const visibleLoans =
-    scope === "incoming"
-      ? loanRows.filter((row) => row.destination === "Morrow Archive")
-      : scope === "outgoing"
-        ? loanRows.filter((row) => row.destination !== "Morrow Archive")
-        : loanRows;
-  const openDossier = (nextStep: number) => {
-    setStep(nextStep);
-    window.setTimeout(
-      () =>
-        document
-          .getElementById("loan-dossier")
-          ?.scrollIntoView({ block: "start" }),
-      0,
-    );
-  };
-
-  return (
-    <PageFrame
-      route="Loans"
-      title="Loan operations"
-      description="Track institutional commitments, movement readiness, and object risk from first request through safe return."
-    >
-      <Toolbar
-        className="loan-command-bar"
-        label="Loan command controls"
-        density="compact"
-        actions={
-          <div className="loan-command-actions">
-            <Button
-              variant="secondary"
-              onClick={() => setSpeedOpen((value) => !value)}
-            >
-              <Icon name="bolt" />
-              {speedOpen ? "Close actions" : "Quick actions"}
-            </Button>
-            <SpeedDial
-              className="loan-speed-dial"
-              open={speedOpen}
-              label="Loan quick actions"
-              actions={[
-                {
-                  id: "note",
-                  label: "Add courier note",
-                  icon: <Icon name="comment" />,
-                  onSelect: () => {
-                    setSpeedOpen(false);
-                    showMessage("Courier note added.");
-                  },
-                },
-                {
-                  id: "photo",
-                  label: "Add condition photo",
-                  icon: <Icon name="scan" />,
-                  onSelect: () => {
-                    setSpeedOpen(false);
-                    showMessage("Photo capture opened.", "info");
-                  },
-                },
-                {
-                  id: "certificate",
-                  label: "Request certificate",
-                  icon: <Icon name="fileData" />,
-                  onSelect: () => {
-                    setSpeedOpen(false);
-                    showMessage("Certificate request sent.");
-                  },
-                },
-                {
-                  id: "delete",
-                  label: "Delete loan",
-                  icon: <Icon name="delete" />,
-                  disabled: true,
-                },
-              ]}
-            />
-            <Button onClick={() => openDossier(1)}>
-              Review LN-2468
-              <Icon name="arrowRight" />
-            </Button>
-          </div>
-        }
-      >
-        <ToggleGroup
-          label="Loan register scope"
-          value={scope}
-          options={[
-            { label: "Active", value: "active" },
-            { label: "Incoming", value: "incoming" },
-            { label: "Outgoing", value: "outgoing" },
-          ]}
-          onValueChange={setScope}
-        />
-      </Toolbar>
-
-      <section className="loan-metric-strip" aria-label="Loan status summary">
-        <div className="loan-metric">
-          <span>Open loans</span>
-          <strong>14</strong>
-          <small>6 incoming · 8 outgoing</small>
-        </div>
-        <div className="loan-metric">
-          <span>Moving in 14 days</span>
-          <strong>5</strong>
-          <small>Three couriers confirmed</small>
-        </div>
-        <div className="loan-metric">
-          <span>Attention required</span>
-          <strong>3</strong>
-          <small>One blocks approval</small>
-        </div>
-        <div className="loan-metric">
-          <span>Insured value</span>
-          <strong>$18.6M</strong>
-          <small>Across active commitments</small>
-        </div>
-      </section>
-
-      <div className="loan-briefing-grid">
-        <section className="loan-movement-desk" aria-labelledby="movement-title">
-          <div className="panel-title-row">
-            <div>
-              <span className="eyebrow">Movement desk · 28 August</span>
-              <Typography id="movement-title" as="h2" variant="title">
-                What needs a registrar today
-              </Typography>
-            </div>
-            <Badge tone="warning">3 actions</Badge>
-          </div>
-          <div className="loan-movement-list">
-            <article className="loan-movement-row">
-              <time dateTime="2026-08-28T11:00">11:00</time>
-              <div>
-                <strong>Approve crate specification · Signal Field</strong>
-                <span>LN-2481 · Outgoing to Kunsthalle Nord</span>
-              </div>
-              <Button
-                size="sm"
-                variant="secondary"
-                onClick={() => showMessage("Crate specification opened.", "info")}
-              >
-                Review
-              </Button>
-            </article>
-            <article className="loan-movement-row">
-              <time dateTime="2026-08-28T14:30">14:30</time>
-              <div>
-                <strong>Confirm courier route · North Window</strong>
-                <span>LN-2432 · Response overdue by three hours</span>
-              </div>
-              <Button
-                size="sm"
-                variant="secondary"
-                onClick={() => showMessage("Courier contacted.")}
-              >
-                Contact
-              </Button>
-            </article>
-            <article className="loan-movement-row">
-              <time dateTime="2026-08-28T17:00">17:00</time>
-              <div>
-                <strong>Issue condition report · Mountain Valley</strong>
-                <span>LN-2468 · Required before institutional approval</span>
-              </div>
-              <Button size="sm" onClick={() => openDossier(3)}>
-                Open review
-              </Button>
-            </article>
-          </div>
-        </section>
-
-        <figure className="loan-feature">
-          <img
-            src={logisticsImage}
-            alt="Museum logistics team preparing a protected artwork crate for transport"
-          />
-          <figcaption>
-            <span className="eyebrow">Next departure · 12 September</span>
-            <Typography as="h2" variant="title">
-              Signal Field leaves for Kunsthalle Nord
-            </Typography>
-            <dl className="metadata-list">
-              <div>
-                <dt>Crate</dt>
-                <dd>14 · climate logged</dd>
-              </div>
-              <div>
-                <dt>Courier</dt>
-                <dd>Leah Sung · confirmed</dd>
-              </div>
-              <div>
-                <dt>Readiness</dt>
-                <dd>86 percent</dd>
-              </div>
-            </dl>
-          </figcaption>
-        </figure>
-      </div>
-
-      <section className="section-rule" aria-labelledby="loan-register-title">
-        <div className="panel-title-row">
-          <div>
-            <span className="eyebrow">Working register</span>
-            <Typography id="loan-register-title" as="h2" variant="title">
-              Active commitments
-            </Typography>
-          </div>
-          <Badge tone="info">{visibleLoans.length} shown</Badge>
-        </div>
-        <div className="desktop-loan-register">
-          <DataGrid
-            caption="Active loan commitments"
-            rows={visibleLoans}
-            columns={loanColumns}
-            filterable
-            sortable
-            pageable
-            pageSize={4}
-          />
-        </div>
-        <div className="mobile-loan-register" aria-label="Active loan commitments">
-          {visibleLoans.slice(0, 4).map((row) => (
-            <article className="mobile-loan-record" key={row.ref}>
-              <div>
-                <span className="eyebrow">{row.ref}</span>
-                <Typography as="h3" variant="title">
-                  {row.object}
-                </Typography>
-                <span>{row.destination}</span>
-              </div>
-              <dl>
-                <div>
-                  <dt>Departure</dt>
-                  <dd>{row.depart}</dd>
-                </div>
-                <div>
-                  <dt>Risk</dt>
-                  <dd>
-                    <Badge
-                      tone={
-                        row.risk === "High"
-                          ? "danger"
-                          : row.risk === "Medium"
-                            ? "warning"
-                            : "success"
-                      }
-                    >
-                      {row.risk}
-                    </Badge>
-                  </dd>
-                </div>
-              </dl>
-              <Button
-                variant="secondary"
-                onClick={() => showMessage(`${row.ref} opened.`, "info")}
-              >
-                Open loan
-              </Button>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section-rule" aria-labelledby="pipeline-title">
-        <div className="panel-title-row">
-          <div>
-            <span className="eyebrow">Across institutions</span>
-            <Typography id="pipeline-title" as="h2" variant="title">
-              Pipeline by responsibility
-            </Typography>
-          </div>
-          <Typography variant="caption">Six records · three stages</Typography>
-        </div>
-        <div className="desktop-loan-pipeline">
-          <WorkflowBoard columns={board} />
-        </div>
-        <div className="mobile-loan-pipeline" aria-label="Loan pipeline stages">
-          {board.map((column) => (
-            <section key={column.id}>
-              <div>
-                <strong>{column.title}</strong>
-                <span>{column.items.length}</span>
-              </div>
-              {column.items.map((item) => (
-                <p key={item.id}>
-                  <strong>{item.title}</strong>
-                  <span>{item.meta}</span>
-                </p>
-              ))}
-            </section>
-          ))}
-        </div>
-      </section>
-
-      <section
-        id="loan-dossier"
-        className="loan-dossier section-rule"
-        aria-labelledby="request-title"
-      >
-        <div className="loan-dossier-heading">
-          <div>
-            <span className="eyebrow">Priority review · LN-2468</span>
-            <Typography id="request-title" as="h2" variant="title">
-              Mountain Valley incoming loan
-            </Typography>
-            <Typography variant="body">
-              National Gallery of Cascadia · Requested for Measures of distance
-            </Typography>
-          </div>
-          <Badge tone="warning">Condition review</Badge>
-        </div>
-
-        <dl className="loan-dossier-summary">
-          <div>
-            <dt>Arrival</dt>
-            <dd>08 Sep 2026</dd>
-          </div>
-          <div>
-            <dt>Return</dt>
-            <dd>19 Jan 2027</dd>
-          </div>
-          <div>
-            <dt>Agreed value</dt>
-            <dd>$2.75 million</dd>
-          </div>
-          <div>
-            <dt>Owner</dt>
-            <dd>Amina Morrow</dd>
-          </div>
-        </dl>
-
-        <Stepper
-          className="loan-review-stepper"
-          activeIndex={step - 1}
-          aria-label="Loan review progress"
-          steps={[
-            { id: "object", label: "Object", description: "Identity and lender" },
-            { id: "schedule", label: "Schedule", description: "Dates and route" },
-            { id: "risk", label: "Risk", description: "Condition and terms" },
-            { id: "approval", label: "Approval", description: "Team and sign-off" },
-          ]}
-        />
-
-        <div className="loan-step-shell">
-          <div className="loan-step-main" aria-live="polite">
-            <div className="loan-step-heading">
-              <span className="eyebrow">Step {step} of 4</span>
-              <Typography as="h3" variant="title">
-                {stepTitles[step - 1]}
-              </Typography>
-            </div>
-
-            {step === 1 && (
-              <Grid columns="two" gap="md">
-                <Autocomplete
-                  label="Object"
-                  defaultValue="Mountain Valley, 1867"
-                  options={[
-                    "Mountain Valley, 1867",
-                    "Signal Field, 1994",
-                    "River Index, 2008",
-                  ]}
-                />
-                <TextInput
-                  label="Lending institution"
-                  defaultValue="National Gallery of Cascadia"
-                />
-                <TextInput
-                  label="Exhibition"
-                  defaultValue="Measures of distance"
-                />
-                <TextInput label="Lender reference" defaultValue="NGC-2026-118" />
-              </Grid>
-            )}
-
-            {step === 2 && (
-              <>
-                <Grid columns="two" gap="md">
-                  <DatePicker
-                    label="Requested arrival"
-                    defaultValue="2026-09-08"
-                  />
-                  <DatePicker
-                    label="Return deadline"
-                    defaultValue="2027-01-19"
-                  />
-                  <TimePicker
-                    label="Courier arrival window"
-                    defaultValue="09:30"
-                    hint="Local gallery time"
-                  />
-                  <TextInput
-                    label="Receiving location"
-                    defaultValue="Loading bay 2"
-                  />
-                </Grid>
-                <RadioGroup
-                  label="Transport method"
-                  name="transport"
-                  value={transport}
-                  onValueChange={setTransport}
-                  options={[
-                    {
-                      label: "Dedicated art vehicle",
-                      value: "dedicated",
-                      description: "Direct route with dual-driver coverage",
-                    },
-                    {
-                      label: "Consolidated fine-art transport",
-                      value: "consolidated",
-                      description: "Shared climate-controlled route",
-                    },
-                    {
-                      label: "Air freight with courier",
-                      value: "air",
-                      description: "Courier accompanies the object",
-                    },
-                  ]}
-                />
-              </>
-            )}
-
-            {step === 3 && (
-              <>
-                <Grid columns="two" gap="md">
-                  <NumberField
-                    label="Insurance value"
-                    defaultValue={2750000}
-                    min={0}
-                    hint="USD, agreed value"
-                  />
-                  <Rating
-                    label="Condition risk rating"
-                    value={rating}
-                    onValueChange={setRating}
-                  />
-                </Grid>
-                <Textarea
-                  label="Handling and display requirements"
-                  defaultValue="Keep upright during all movement. Acclimatize for 12 hours before unpacking. No glazing contact."
-                />
-                <FileUpload
-                  label="Loan documentation"
-                  description="Attach the facility report, insurance certificate, and signed request."
-                  multiple
-                  files={[
-                    { name: "facility-report.pdf", meta: "2.4 MB · verified" },
-                    {
-                      name: "insurance-certificate.pdf",
-                      meta: "640 KB · expires 19 Jan",
-                    },
-                  ]}
-                />
-              </>
-            )}
-
-            {step === 4 && (
-              <>
-                <Alert tone="warning" title="One approval condition remains">
-                  The initial condition report is due within two days of arrival.
-                  Approval will create that task automatically.
-                </Alert>
-                <TransferList
-                  className="loan-team-transfer"
-                  sourceTitle="Available specialists"
-                  targetTitle="Assigned to LN-2468"
-                  sourceItems={[
-                    {
-                      id: "maya",
-                      label: "Maya Ortega · registrar",
-                      selected: true,
-                    },
-                    { id: "jon", label: "Jon Bell · paintings conservation" },
-                    { id: "leah", label: "Leah Sung · courier", disabled: true },
-                  ]}
-                  targetItems={[
-                    {
-                      id: "amina",
-                      label: "Amina Morrow · lead registrar",
-                      selected: true,
-                    },
-                    {
-                      id: "milo",
-                      label: "Milo Chen · installation",
-                      selected: true,
-                    },
-                  ]}
-                  onMoveRight={() => showMessage("Selected specialist assigned.")}
-                  onMoveLeft={() => showMessage("Assignment removed.", "info")}
-                />
-              </>
-            )}
-          </div>
-
-          <aside className="loan-review-aside">
-            <Typography as="h3" variant="title">
-              Review status
-            </Typography>
-            <Progress label="Request completeness" value={78} />
-            <dl className="metadata-list">
-              <div>
-                <dt>Risk</dt>
-                <dd>{rating} of 5</dd>
-              </div>
-              <div>
-                <dt>Files</dt>
-                <dd>2 verified</dd>
-              </div>
-              <div>
-                <dt>Courier</dt>
-                <dd>Required</dd>
-              </div>
-            </dl>
-            <Accordion
-              items={[
-                {
-                  id: "climate",
-                  title: "Climate envelope",
-                  content:
-                    "Target 50 ± 4 percent RH and 20 ± 2°C throughout transport and display.",
-                },
-                {
-                  id: "security",
-                  title: "Security terms",
-                  content:
-                    "Continuous courier line-of-sight from unpacking through final wall placement.",
-                },
-                {
-                  id: "mount",
-                  title: "Mount approval",
-                  content:
-                    "The travel frame is approved. Final wall fixings require lender sign-off.",
-                },
-              ]}
-            />
-          </aside>
-        </div>
-
-        <Toolbar
-          className="loan-step-actions"
-          label="Loan request actions"
-          actions={
-            <ButtonGroup label="Request actions">
-              <Button
-                variant="secondary"
-                onClick={() => showMessage("Loan request saved as a draft.")}
-              >
-                Save draft
-              </Button>
-              <Button onClick={() => setDialogOpen(true)}>
-                Review approval
-              </Button>
-            </ButtonGroup>
-          }
-        >
-          <Button
-            size="sm"
-            variant="secondary"
-            disabled={step === 1}
-            onClick={() => setStep((value) => Math.max(1, value - 1))}
-          >
-            <Icon name="arrowLeft" />
-            Previous
-          </Button>
-          <Button
-            size="sm"
-            variant="secondary"
-            disabled={step === 4}
-            onClick={() => setStep((value) => Math.min(4, value + 1))}
-          >
-            Next
-            <Icon name="arrowRight" />
-          </Button>
-        </Toolbar>
-      </section>
-
-      <Dialog
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        title="Approve incoming loan LN-2468?"
-        description="Approval confirms institutional acceptance of the agreed value, schedule, climate envelope, and courier requirements."
-        actions={
-          <>
-            <Button
-              onClick={() => {
-                setDialogOpen(false);
-                setStep(4);
-                showMessage("Incoming loan approved.");
-              }}
-            >
-              Approve incoming loan
-            </Button>
-            <Button variant="secondary" onClick={() => setDialogOpen(false)}>
-              Keep reviewing
-            </Button>
-          </>
-        }
-      >
-        <Alert tone="warning" title="One follow-up remains">
-          The initial condition report is due within two days of arrival.
-          Approval will create that task automatically.
-        </Alert>
-      </Dialog>
-    </PageFrame>
-  );
-}
-
-function ConservationPage({ showMessage }: PageProps) {
-  const [tab, setTab] = React.useState("examination");
-  const [files, setFiles] = React.useState<
-    Array<{ name: React.ReactNode; meta: React.ReactNode }>
-  >([{ name: "raking-light-detail.jpg", meta: "4.1 MB · 09:14" }]);
-  return (
-    <PageFrame
-      route="Conservation / MA.2019.153"
-      title="Mountain Valley, 1867"
-      description="Initial incoming-loan condition examination for National Gallery of Cascadia. Evidence is due today at 17:00."
-    >
-      <div className="record-banner">
-        <figure>
-          <img
-            src={conservationImage}
-            alt="Gloved hands examining fine craquelure on the painted surface of Mountain Valley"
-          />
-        </figure>
-        <div className="record-banner-copy">
-          <span className="eyebrow">Paintings conservation</span>
-          <Typography as="h2" variant="title">
-            Incoming examination
-          </Typography>
-          <dl className="metadata-list">
-            <div>
-              <dt>Examiner</dt>
-              <dd>
-                <Avatar initials="JB" size="sm" /> Jon Bell
-              </dd>
-            </div>
-            <div>
-              <dt>Loan</dt>
-              <dd>LN-2468</dd>
-            </div>
-            <div>
-              <dt>Location</dt>
-              <dd>Studio 1 · table B</dd>
-            </div>
-            <div>
-              <dt>Due</dt>
-              <dd>Today · 17:00</dd>
-            </div>
-          </dl>
-          <Progress label="Examination completion" value={64} />
-        </div>
-      </div>
-      <Tabs
-        activeId={tab}
-        onChange={setTab}
-        label="Conservation record"
-        items={[
-          { id: "examination", label: "Examination" },
-          { id: "evidence", label: "Evidence" },
-          { id: "history", label: "History" },
-        ]}
-      />
-      {tab === "examination" && (
-        <div className="conservation-workspace">
-          <Sidebar
-            activeId="surface"
-            heading="Examination sections"
-            label="Examination sections"
-            items={[
-              {
-                id: "overview",
-                label: "Overview",
-                icon: <Icon name="clipboardList" />,
-              },
-              {
-                id: "surface",
-                label: "Paint surface",
-                icon: <Icon name="scanLine" />,
-                badge: <Badge tone="warning">3</Badge>,
-              },
-              { id: "support", label: "Support", icon: <Icon name="layers" /> },
-              {
-                id: "frame",
-                label: "Frame",
-                icon: <Icon name="squareStack" />,
-              },
-              { id: "sign", label: "Sign-off", icon: <Icon name="approved" /> },
-            ]}
-          />
-          <div className="conservation-form">
-            <Alert tone="info" title="Raking-light comparison available">
-              A 2023 outgoing-loan image is available beside the new evidence
-              for direct comparison.
-            </Alert>
-            <Grid columns="two" gap="md">
-              <Select
-                label="Finding type"
-                options={[
-                  { label: "Craquelure", value: "craquelure" },
-                  { label: "Abrasion", value: "abrasion" },
-                  { label: "Loss", value: "loss" },
-                  { label: "Surface deposit", value: "deposit" },
-                ]}
-              />
-              <Select
-                label="Location"
-                options={[
-                  { label: "Upper centre", value: "upper-centre" },
-                  { label: "Lower left", value: "lower-left" },
-                  { label: "Overall", value: "overall" },
-                ]}
-              />
-            </Grid>
-            <Rating label="Finding severity" value={2} />
-            <Textarea
-              label="Finding description"
-              error="Describe the approximate size before saving this finding."
-              defaultValue="Fine age-consistent craquelure with one area of raised paint under raking light."
-            />
-            <Checkbox
-              label="Mark for lender review"
-              description="Include this finding in the lender-facing report."
-              defaultChecked
-            />
-            <Checkbox
-              label="Requires treatment before display"
-              description="Create a treatment proposal when the examination is signed."
-            />
-            <FileUpload
-              label="Add evidence"
-              description="JPEG, TIFF, or PDF. Include a scale and object reference where useful."
-              multiple
-              files={files}
-              onFilesChange={(next) =>
-                setFiles(
-                  next.map((file) => ({
-                    name: file.name,
-                    meta: `${Math.max(1, Math.round(file.size / 1024))} KB · ready`,
-                  })),
-                )
-              }
-            />
-            <ButtonGroup
-              className="conservation-actions"
-              label="Conservation record actions"
-            >
-              <Button
-                variant="secondary"
-                onClick={() => showMessage("Examination draft saved.")}
-              >
-                Save draft
-              </Button>
-              <Button
-                onClick={() =>
-                  showMessage("Finding added to the condition report.")
-                }
-              >
-                Add finding
-              </Button>
-            </ButtonGroup>
-          </div>
-        </div>
-      )}
-      {tab === "evidence" && (
-        <ImageList
-          columns="two"
-          items={[
-            {
-              src: conservationImage,
-              alt: "Raking-light examination detail showing craquelure",
-              caption: "Raking light · upper centre · 28 Aug 2026",
-            },
-            {
-              src: galleryImage,
-              alt: "Reference installation view of the exhibition gallery",
-              caption: "Gallery context · proposed location",
-            },
-            {
-              src: logisticsImage,
-              alt: "Wrapped sculpture supported for packing in the logistics bay",
-              caption: "Handling reference · Bay 3",
-            },
-          ]}
-        />
-      )}
-      {tab === "history" && (
-        <Timeline
-          events={[
-            {
-              id: "h1",
-              label: "Incoming examination opened",
-              description: "Jon Bell · Studio 1",
-              meta: "Today, 08:36",
-            },
-            {
-              id: "h2",
-              label: "Object acclimatization completed",
-              description: "Environmental range remained stable",
-              meta: "Today, 07:55",
-            },
-            {
-              id: "h3",
-              label: "Courier handoff signed",
-              description: "Leah Sung and Maya Ortega",
-              meta: "Yesterday, 16:42",
-            },
-            {
-              id: "h4",
-              label: "2023 comparison record linked",
-              description: "Outgoing loan to Ridge Museum",
-              meta: "Yesterday, 15:20",
-            },
-          ]}
-        />
-      )}
-    </PageFrame>
-  );
-}
-
-function CalendarPage({ showMessage }: PageProps) {
-  const [selectedDay, setSelectedDay] = React.useState("12");
-  return (
-    <PageFrame
-      route="Calendar / August 2026"
-      title="Installation calendar"
-      description="Coordinate gallery access, courier arrivals, conservation windows, rigging, lighting, and public programme handoffs."
-    >
-      <Toolbar
-        label="Calendar filters"
-        density="compact"
-        actions={
-          <Button
-            onClick={() => showMessage("Installation event draft created.")}
-          >
-            Create event
-          </Button>
-        }
-      >
-        <Select
-          label="Gallery"
-          defaultValue="gallery-2"
-          options={[
-            { label: "All galleries", value: "all" },
-            { label: "Gallery 2", value: "gallery-2" },
-            { label: "Receiving store", value: "receiving" },
-            { label: "Conservation studio", value: "studio" },
-          ]}
-        />
-        <ToggleGroup
-          label="Calendar density"
-          value="month"
-          options={[
-            { label: "Month", value: "month" },
-            { label: "Week", value: "week" },
-            { label: "Agenda", value: "agenda" },
-          ]}
-          onValueChange={() => undefined}
-        />
-      </Toolbar>
-      <div className="calendar-layout">
-        <Calendar
-          label="August 2026 installation calendar"
-          monthLabel="August 2026"
-          weekdays={["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]}
-          days={calendarDays.map((day) => ({
-            ...day,
-            selected: day.label === selectedDay,
-          }))}
-          onDaySelect={(day) => setSelectedDay(String(day.label))}
-        />
-        <Paper elevation="sm" className="day-agenda">
-          <span className="eyebrow">Wednesday 12 August</span>
-          <Typography as="h2" variant="title">
-            Four coordinated events
-          </Typography>
-          <Timeline
-            events={[
-              {
-                id: "a1",
-                label: "Courier arrival · Mountain Valley",
-                description: "Receiving store · Leah Sung",
-                meta: "09:30–10:15",
-              },
-              {
-                id: "a2",
-                label: "Rigging review · Counterweight No. 6",
-                description: "Gallery 2 · Milo Chen",
-                meta: "11:00–12:00",
-              },
-              {
-                id: "a3",
-                label: "Lighting focus · north wall",
-                description: "Gallery 2 · Studio Lux",
-                meta: "14:00–16:30",
-              },
-              {
-                id: "a4",
-                label: "Curatorial walk-through",
-                description: "Full exhibition route",
-                meta: "17:00–17:45",
-              },
-            ]}
-          />
-          <Button
-            variant="secondary"
-            onClick={() => showMessage("Day agenda exported.", "info")}
-          >
-            Export day agenda
-          </Button>
-        </Paper>
-      </div>
-      <section className="section-rule" aria-labelledby="crew-title">
-        <div className="panel-title-row">
-          <Typography id="crew-title" as="h2" variant="title">
-            Crew capacity
-          </Typography>
-          <Badge tone="warning">Rigging at limit</Badge>
-        </div>
-        <Chart
-          label="Installation crew capacity"
-          data={[
-            { label: "Registration", value: 68 },
-            { label: "Conservation", value: 74 },
-            { label: "Art handling", value: 82 },
-            { label: "Rigging", value: 100 },
-            { label: "Lighting", value: 61 },
-          ]}
-        />
-      </section>
-    </PageFrame>
-  );
-}
-
-function SettingsPage({
-  showMessage,
-  mode,
-  setMode,
-}: PageProps & { mode: ThemeMode; setMode: (mode: ThemeMode) => void }) {
-  const [tab, setTab] = React.useState("workspace");
-  const [saving, setSaving] = React.useState(false);
-  const [email, setEmail] = React.useState("operations@morrow.example");
-  const emailError = email.includes("@")
-    ? undefined
-    : "Email address needs an @ symbol. Example: name@museum.org";
-  const save = () => {
-    if (emailError) return;
-    setSaving(true);
-    window.setTimeout(() => {
-      setSaving(false);
-      showMessage("Institution settings saved.");
-    }, 700);
-  };
-  return (
-    <PageFrame
-      route="Settings"
-      title="Institution settings"
-      description="Manage workspace identity, notifications, environmental thresholds, access, and the persisted CorvaUI theme."
-    >
-      <Tabs
-        activeId={tab}
-        onChange={setTab}
-        label="Settings sections"
-        items={[
-          { id: "workspace", label: "Workspace" },
-          { id: "notifications", label: "Notifications" },
-          { id: "access", label: "Access" },
-        ]}
-      />
-      {tab === "workspace" && (
-        <div className="settings-layout">
-          <section className="settings-form" aria-labelledby="workspace-title">
-            <Typography id="workspace-title" as="h2" variant="title">
-              Workspace profile
-            </Typography>
-            <TextInput label="Institution name" defaultValue="Morrow Archive" />
-            <TextInput
-              label="Operations email"
-              value={email}
-              onChange={(event) => setEmail(event.currentTarget.value)}
-              error={emailError}
-            />
-            <Select
-              label="Primary time zone"
-              defaultValue="america-new-york"
-              options={[
-                { label: "America / New York", value: "america-new-york" },
-                { label: "Europe / London", value: "europe-london" },
-                { label: "Asia / Tokyo", value: "asia-tokyo" },
-              ]}
-            />
-            <Textarea
-              label="Public collection statement"
-              defaultValue="Morrow Archive cares for modern and contemporary art through research, responsible stewardship, and public access."
-            />
-            <Button onClick={save} disabled={Boolean(emailError) || saving}>
-              {saving ? (
-                <>
-                  <Spinner size="sm" label="Saving institution settings" />{" "}
-                  Saving settings...
-                </>
-              ) : (
-                "Save workspace"
-              )}
-            </Button>
-          </section>
-          <aside className="settings-aside">
-            <Paper elevation="sm">
-              <Typography as="h2" variant="title">
-                Appearance
-              </Typography>
-              <Switch
-                label="Use dark theme"
-                description="Saved on this device and applied before the next working session."
-                checked={mode === "dark"}
-                onChange={() => setMode(mode === "light" ? "dark" : "light")}
-              />
-              <Alert tone="info" title="Published theme">
-                The demo uses concept-light and concept-dark exactly as supplied
-                by @corvaui/tokens.
-              </Alert>
-            </Paper>
-            <Paper elevation="sm">
-              <Typography as="h2" variant="title">
-                Environmental defaults
-              </Typography>
-              <NumberField
-                label="Target relative humidity"
-                defaultValue={50}
-                min={35}
-                max={65}
-              />
-              <Slider
-                label="Light exposure warning threshold"
-                min={0}
-                max={100}
-                defaultValue={42}
-              />
-              <Typography variant="caption">
-                Applied to new exhibition zones. Object-specific limits remain
-                authoritative.
-              </Typography>
-            </Paper>
-          </aside>
-        </div>
-      )}
-      {tab === "notifications" && (
-        <section className="settings-form" aria-labelledby="notification-title">
-          <Typography id="notification-title" as="h2" variant="title">
-            Notification policy
-          </Typography>
-          <Switch
-            label="Critical condition findings"
-            description="Notify registrars and conservation leads immediately."
-            defaultChecked
-          />
-          <Switch
-            label="Courier delays"
-            description="Notify the assigned registrar after a 30-minute variance."
-            defaultChecked
-          />
-          <Switch
-            label="Weekly readiness digest"
-            description="Send every Monday at 08:00 local time."
-            defaultChecked
-          />
-          <Select
-            label="Digest cadence"
-            options={[
-              { label: "Every Monday", value: "weekly" },
-              { label: "Every weekday", value: "daily" },
-              { label: "Never", value: "never" },
-            ]}
-          />
-          <Button onClick={save}>
-            {saving ? "Saving..." : "Save notification policy"}
-          </Button>
-        </section>
-      )}
-      {tab === "access" && (
-        <section aria-labelledby="access-title">
-          <Typography id="access-title" as="h2" variant="title">
-            Exhibition access
-          </Typography>
-          <Typography variant="body">
-            Assign specialists to Measures of distance. Disabled entries are
-            managed by their home institution.
-          </Typography>
-          <TransferList
-            sourceTitle="Available people"
-            targetTitle="Exhibition team"
-            sourceItems={[
-              { id: "a", label: "Priya Anand · photography" },
-              { id: "b", label: "Theo Brooks · visitor services" },
-              {
-                id: "c",
-                label: "Leah Sung · external courier",
-                disabled: true,
-              },
-            ]}
-            targetItems={[
-              { id: "d", label: "Elena Ruiz · curator", selected: true },
-              { id: "e", label: "Amina Morrow · registrar", selected: true },
-              { id: "f", label: "Jon Bell · conservator", selected: true },
-            ]}
-            onMoveRight={() =>
-              showMessage("Selected people added to the exhibition.")
-            }
-            onMoveLeft={() =>
-              showMessage(
-                "Selected people removed from the exhibition.",
-                "info",
-              )
-            }
-          />
-          <Button onClick={save}>Save access</Button>
-        </section>
-      )}
-    </PageFrame>
-  );
-}
-
-function ProofPage({ showMessage }: PageProps) {
-  const [tab, setTab] = React.useState("coverage");
-  const [coverageScope, setCoverageScope] = React.useState("all");
-  const visibleCoverageRows =
-    coverageScope === "all"
-      ? coverageRows
-      : coverageRows.filter(
-          (row) => row.group.toLowerCase() === coverageScope,
-        );
-  return (
-    <PageFrame
-      route="System proof"
-      title="CorvaUI, exercised as a product"
-      description="The showcase uses the published React package and published Concept theme without redefining component colors or design-system tokens."
-    >
-      <Alert tone="success" title="Package integration verified">
-        @corvaui/react 0.1.8 and @corvaui/tokens 0.1.8 are the only visual
-        system packages used by this demo.
-      </Alert>
-      <Tabs
-        activeId={tab}
-        onChange={setTab}
-        label="System proof sections"
-        items={[
-          { id: "coverage", label: "Coverage" },
-          { id: "states", label: "States" },
-          { id: "accessibility", label: "Accessibility" },
-        ]}
-      />
-      {tab === "coverage" && (
-        <>
-          <section className="proof-intro">
-            <Metric
-              label="Public exports"
-              value="67"
-              note="Audited from package index"
-            />
-            <Metric
-              label="Integrated"
-              value="67"
-              note="Used in believable workflows"
-            />
-            <Metric label="Omitted" value="0" note="No specimen-only imports" />
-          </section>
-          <MenuBar
-            label="Filter component coverage"
-            items={[
-              { id: "all", label: "All", current: coverageScope === "all" },
-              {
-                id: "atoms",
-                label: "Atoms",
-                current: coverageScope === "atoms",
-              },
-              {
-                id: "molecules",
-                label: "Molecules",
-                current: coverageScope === "molecules",
-              },
-              {
-                id: "organisms",
-                label: "Organisms",
-                current: coverageScope === "organisms",
-              },
-            ].map((item) => ({
-              ...item,
-              onSelect: () => setCoverageScope(item.id),
-            }))}
-          />
-          <DataTable
-            caption="CorvaUI coverage summary"
-            columns={[
-              { key: "group", header: "Package group" },
-              { key: "count", header: "Exports" },
-              { key: "routes", header: "Primary use" },
-              { key: "status", header: "Coverage" },
-            ]}
-            rows={visibleCoverageRows}
-          />
-          <Accordion
-            items={[
-              {
-                id: "source",
-                title: "Source of truth",
-                content:
-                  "The public index in the installed @corvaui/react package defines the 67-component audit surface.",
-              },
-              {
-                id: "responsible",
-                title: "What counts as responsible coverage",
-                content:
-                  "A component must participate in a real workflow, feedback state, navigation model, data task, or editorial story. Hidden imports do not count.",
-              },
-              {
-                id: "theme",
-                title: "Theme constraint",
-                content:
-                  "All color roles come from the published Concept theme. App CSS manages only layout, responsive composition, image treatment, and motion.",
-              },
-            ]}
-          />
-          <Divider label="Package references" decorative={false} />
-          <Link
-            href="https://www.npmjs.com/package/@corvaui/react"
-            target="_blank"
-            rel="noreferrer"
-            variant="standalone"
-          >
-            View the published React package
-          </Link>
-        </>
-      )}
-      {tab === "states" && (
-        <Grid columns="two" gap="lg">
-          <Paper elevation="sm">
-            <Typography as="h2" variant="title">
-              Feedback language
-            </Typography>
-            <Stack gap="sm">
-              <Alert tone="success" title="Condition report signed">
-                The lender-facing PDF is ready.
-              </Alert>
-              <Alert tone="warning" title="Courier response overdue">
-                The last confirmed route remains visible.
-              </Alert>
-              <Alert tone="danger" title="Upload could not finish">
-                The connection was interrupted. The draft is safe.
-              </Alert>
-              <Button onClick={() => showMessage("State feedback verified.")}>
-                Trigger success snackbar
-              </Button>
-              <Button disabled>Unavailable during sync</Button>
-            </Stack>
-          </Paper>
-          <Paper elevation="sm">
-            <Typography as="h2" variant="title">
-              Loading language
-            </Typography>
-            <Stack gap="md">
-              <Skeleton variant="text" label="Loading object title" />
-              <Skeleton
-                variant="rectangular"
-                size="lg"
-                label="Loading evidence preview"
-              />
-              <Stack direction="row" gap="sm" align="center">
-                <Spinner label="Saving state example" />
-                <Typography variant="body">
-                  Saving the examination draft...
-                </Typography>
-              </Stack>
-            </Stack>
-          </Paper>
-        </Grid>
-      )}
-      {tab === "accessibility" && (
-        <div className="two-pane">
-          <List
-            items={[
-              {
-                id: "a11y1",
-                label: "WCAG A and AA",
-                description:
-                  "Automated axe checks run on every route and both themes.",
-              },
-              {
-                id: "a11y2",
-                label: "Keyboard paths",
-                description:
-                  "Skip link, menus, drawers, dialogs, filters, tabs, and route focus are covered.",
-              },
-              {
-                id: "a11y3",
-                label: "Mobile reflow",
-                description:
-                  "Narrow widths use stacked records and content-priority changes without page overflow.",
-              },
-              {
-                id: "a11y4",
-                label: "Reduced motion",
-                description:
-                  "Spatial animation is removed when reduced motion is requested.",
-              },
-            ]}
-          />
-          <Box padding="lg" surface="subtle">
-            <Typography as="h2" variant="title">
-              Asset attribution
-            </Typography>
-            <Typography variant="body">
-              The gallery, conservation, and logistics images were generated
-              specifically for this private demo with OpenAI ImageGen. No
-              external stock assets or third-party artwork reproductions are
-              used.
-            </Typography>
-          </Box>
-        </div>
-      )}
-    </PageFrame>
-  );
-}
-
-function PageFrame({
-  route,
+function PageLead({
+  eyebrow,
   title,
-  description,
-  children,
+  body,
+  marker,
+  markerIcon,
+  details,
 }: {
-  route: string;
+  eyebrow: string;
   title: string;
-  description: string;
-  children: React.ReactNode;
+  body: string;
+  marker: string;
+  markerIcon: React.ReactNode;
+  details: string[];
 }) {
   return (
-    <Container size="lg" className="page-frame">
-      <Breadcrumbs
-        items={[
-          { label: "Morrow Archive", href: "#/" },
-          { label: route, current: true },
-        ]}
-      />
-      <header className="page-header">
-        <div>
-          <span className="eyebrow">Working register</span>
-          <Typography
-            id="page-title"
-            tabIndex={-1}
-            as="h1"
-            variant="title"
-            className="page-title"
-          >
-            {title}
-          </Typography>
-        </div>
-        <Typography variant="body" className="page-description">
-          {description}
-        </Typography>
-      </header>
-      <div className="page-stack">{children}</div>
-    </Container>
+    <header className="page-lead reveal">
+      <div className="page-lead-copy">
+        <Eyebrow>{eyebrow}</Eyebrow>
+        <Typography as="h1" variant="display">{title}</Typography>
+        <Typography variant="subtitle">{body}</Typography>
+      </div>
+      <aside className="page-marker" aria-label={`${eyebrow} context`}>
+        <span className="page-marker-icon">{markerIcon}</span>
+        <Typography variant="caption">{marker}</Typography>
+        <div>{details.map((detail) => <span key={detail}>{detail}</span>)}</div>
+      </aside>
+    </header>
   );
 }
 
-function Metric({
+function Metric({ label, value, note }: { label: string; value: string; note: string }) {
+  return <div className="metric"><Typography variant="caption">{label}</Typography><strong>{value}</strong><Typography variant="body">{note}</Typography></div>;
+}
+
+function DataCard({
   label,
   value,
   note,
+  badge,
+  tone,
+  progress,
+  icon,
 }: {
   label: string;
   value: string;
   note: string;
+  badge: string;
+  tone: "danger" | "info" | "success" | "warning";
+  progress: number;
+  icon: React.ReactNode;
 }) {
   return (
-    <div className="metric">
-      <span>{label}</span>
-      <strong>{value}</strong>
-      <small>{note}</small>
+    <Paper className="data-card" elevation="none">
+      <div className="data-card-head"><span>{icon}</span><Badge tone={tone}>{badge}</Badge></div>
+      <div><Typography variant="caption">{label}</Typography><strong>{value}</strong><Typography variant="body">{note}</Typography></div>
+      <Progress label={`${label}: ${progress}%`} value={progress} />
+    </Paper>
+  );
+}
+
+function HomePage({ navigate, openContact }: { navigate: Navigate; openContact: () => void }) {
+  return (
+    <>
+      <section className="home-hero" data-corva-theme="concept-dark">
+        <img src={image("asterline-port-hero.png")} alt="Intermodal port, rail, and road infrastructure operating at blue hour" />
+        <div className="home-hero-content reveal">
+          <div className="live-line"><Badge tone="success">Network normal</Badge><span>North Atlantic region</span><span>08:42 UTC</span></div>
+          <Eyebrow>Asterline infrastructure intelligence</Eyebrow>
+          <Typography as="h1" variant="display">Keep the world<br />in motion.</Typography>
+          <Typography variant="subtitle">One operating picture for the people responsible for energy, transit, water, and the systems between them.</Typography>
+          <Stack className="hero-actions" direction="row" gap="md">
+            <Button variant="primary" size="lg" onClick={() => navigate("command")}>Enter command center</Button>
+            <Button variant="secondary" size="lg" onClick={openContact}>Talk to an engineer</Button>
+          </Stack>
+        </div>
+        <div className="hero-metrics">
+          <Metric label="Signals evaluated" value="4.8B" note="each day" />
+          <Metric label="Assets observed" value="2.1M" note="across 31 countries" />
+          <Metric label="Response gained" value="38m" note="median lead time" />
+        </div>
+      </section>
+
+      <section className="customer-ribbon" aria-label="Selected operators">
+        <span>Northshore Energy</span><span>Metro East</span><span>Port Meridian</span><span>Cedar Water</span><span>Helix Rail</span>
+      </section>
+
+      <section className="editorial-intro content-shell reveal">
+        <div><Eyebrow>Operating reality</Eyebrow><Typography as="h2" variant="display">The system knows before the schedule does.</Typography></div>
+        <div><Typography variant="subtitle">Asterline connects condition data, work history, weather, supply constraints, and field context. Teams see emerging risk while there is still time to act.</Typography><Button variant="secondary" size="lg" onClick={() => navigate("platform")}>How the platform works <Icon name="arrowRight" /></Button></div>
+      </section>
+
+      <section className="field-story full-bleed-media">
+        <img src={image("asterline-wind-field.png")} alt="Engineers inspecting an offshore wind turbine" />
+        <div className="field-story-copy" data-corva-theme="concept-dark">
+          <Eyebrow>From signal to field</Eyebrow>
+          <Typography as="h2" variant="display">Turn signals into action.</Typography>
+          <Typography variant="subtitle">A change in vibration is only useful when the right crew, part, access window, and safety plan arrive with it.</Typography>
+          <div className="numbered-points"><div><span>01</span><strong>Detect</strong><p>Find meaningful change across noisy systems.</p></div><div><span>02</span><strong>Decide</strong><p>Understand consequence, confidence, and time.</p></div><div><span>03</span><strong>Dispatch</strong><p>Move complete work into the field.</p></div></div>
+        </div>
+      </section>
+
+      <section className="product-evidence content-shell">
+        <div className="section-copy"><Eyebrow>Live operating picture</Eyebrow><Typography as="h2" variant="display">Every decision keeps its context.</Typography><Typography variant="body">Health, consequence, ownership, and action stay together from the first anomaly through verified closeout.</Typography></div>
+        <Paper className="evidence-surface" elevation="none">
+          <Toolbar label="Network health controls"><Typography variant="title">Cedar regional network</Typography><Badge tone="success">97.4% available</Badge><Button size="sm" variant="secondary" onClick={() => navigate("command")}>Open network</Button></Toolbar>
+          <div className="evidence-grid">
+            <div><Eyebrow>Exposure by day</Eyebrow><Chart label="Seven day network exposure" type="line" animated showGrid showLegend showPoints height={280} xKey="day" data={[{ day: "Mon", risk: 18, baseline: 24 }, { day: "Tue", risk: 21, baseline: 24 }, { day: "Wed", risk: 17, baseline: 24 }, { day: "Thu", risk: 29, baseline: 24 }, { day: "Fri", risk: 23, baseline: 24 }, { day: "Sat", risk: 15, baseline: 24 }, { day: "Sun", risk: 13, baseline: 24 }]} series={[{ key: "risk", label: "Observed exposure" }, { key: "baseline", label: "Planning threshold" }]} /></div>
+            <div className="signal-list"><Eyebrow>Priority signals</Eyebrow><div><span><Badge tone="danger">Critical</Badge><strong>Transformer heat rise</strong></span><strong>SUB-09</strong></div><div><span><Badge tone="warning">Watch</Badge><strong>Wind gearbox vibration</strong></span><strong>WTG-214</strong></div><div><span><Badge tone="info">Planned</Badge><strong>Aqueduct pressure test</strong></span><strong>VAL-291</strong></div><Progress label="Response plans ready: 86%" value={86} /></div>
+          </div>
+        </Paper>
+      </section>
+
+      <section className="case-feature content-shell">
+        <img src={image("asterline-city-network.png")} alt="Urban rail, road, power, and water networks converging at a river" />
+        <div><Eyebrow>Metro East case study</Eyebrow><Typography as="h2" variant="display">One river. Four networks. Zero shared blind spots.</Typography><Typography variant="body">Metro East connected transit, power, drainage, and bridge teams around one consequence model before its busiest construction season.</Typography><div className="case-results"><Metric label="Service interruptions" value="-27%" note="year over year" /><Metric label="Emergency callouts" value="-41%" note="in six months" /></div><Button variant="primary" size="lg" onClick={() => navigate("customers")}>Read the full story <Icon name="arrowRight" /></Button></div>
+      </section>
+
+      <section className="quote-band" data-corva-theme="concept-dark">
+        <blockquote>“We stopped asking which dashboard was right and started deciding what the network needed.”</blockquote>
+        <p>Marisol Chen, VP Network Operations, Metro East</p>
+      </section>
+
+      <section className="closing-cta content-shell"><Eyebrow>See your network differently</Eyebrow><Typography as="h2" variant="display">Bring the work into one operating picture.</Typography><Stack direction="row" gap="md"><Button variant="primary" size="lg" onClick={openContact}>Plan a working session</Button><Button variant="secondary" size="lg" onClick={() => navigate("command")}>Explore the live environment</Button></Stack></section>
+    </>
+  );
+}
+
+function PlatformPage({ navigate }: { navigate: Navigate }) {
+  const [active, setActive] = React.useState("observe");
+  const tabs = [
+    { id: "observe", label: "Observe" },
+    { id: "predict", label: "Predict" },
+    { id: "coordinate", label: "Coordinate" },
+    { id: "verify", label: "Verify" },
+  ];
+  const tabContent: Record<string, { title: string; body: string; stat: string; note: string }> = {
+    observe: { title: "A living model of the network", body: "Telemetry, inspection evidence, weather, operational limits, and asset history resolve into one current state.", stat: "12 sec", note: "median signal-to-context time" },
+    predict: { title: "Consequence before confidence", body: "Asterline separates model certainty from operational consequence so teams can act early without treating every anomaly as an emergency.", stat: "38 min", note: "median response time gained" },
+    coordinate: { title: "The complete work moves together", body: "People, parts, permits, access, and procedures travel with the decision instead of arriving through disconnected systems.", stat: "91%", note: "first-visit resolution" },
+    verify: { title: "Close the loop with evidence", body: "Field proof, measurements, approvals, and follow-up signals stay attached to the asset record and improve the next decision.", stat: "2.7x", note: "faster verified closeout" },
+  };
+  const content = tabContent[active];
+  return (
+    <div className="page-shell platform-page">
+      <PageLead eyebrow="Asterline platform" title="An operating system for physical networks." body="Observe the system, understand consequence, coordinate response, and preserve the evidence that makes every next decision better." marker="01 / Operating model" markerIcon={<Icon name="workflow" />} details={["Four connected layers", "One traceable record", "Live across every shift"]} />
+      <section className="platform-model">
+        <Tabs label="Platform capabilities" activeId={active} items={tabs} onChange={setActive} />
+        <div className="platform-detail"><div><Typography as="h2" variant="display">{content.title}</Typography><Typography variant="subtitle">{content.body}</Typography><Button variant="primary" size="lg" onClick={() => navigate("command")}>See it in operation <Icon name="arrowRight" /></Button></div><Metric label="Operational result" value={content.stat} note={content.note} /></div>
+      </section>
+      <section className="platform-analysis">
+        <div className="section-copy"><Eyebrow>Decision velocity</Eyebrow><Typography as="h2" variant="display">See where operating time is actually lost.</Typography><Typography variant="body">Asterline measures the interval between signal, interpretation, ownership, and action. Teams improve the operating system, not just the dashboard.</Typography><div className="analysis-facts"><Metric label="Median before" value="46 min" note="signal to owned action" /><Metric label="Median with Asterline" value="12 min" note="signal to owned action" /></div></div>
+        <Paper className="analysis-chart" elevation="none"><Chart label="Signal to action time distribution" type="histogram" animated bins={7} controls={["data-table", "download"]} domain={[0, 60]} height={360} xKey="observation" data={[14, 18, 19, 21, 23, 24, 27, 29, 31, 33, 36, 41, 44, 48, 52, 58].map((minutes, index) => ({ observation: index + 1, minutes }))} series={[{ key: "minutes", label: "Minutes to owned action" }]} /></Paper>
+      </section>
+      <section className="control-room-feature"><img src={image("asterline-control-room.png")} alt="Regional transit operations team coordinating service" /><div><Eyebrow>Shared operational truth</Eyebrow><Typography as="h2" variant="display">Built for decisions with real consequences.</Typography><Typography variant="body">Asterline supports control centers, planners, engineers, and field teams without flattening their distinct responsibilities.</Typography></div></section>
+      <section className="capability-ledger">
+        <div><span>01</span><div><Typography as="h3" variant="title">Network model</Typography><p>Assets, topology, dependencies, limits, and current state.</p></div><Badge tone="success">Continuous</Badge></div>
+        <div><span>02</span><div><Typography as="h3" variant="title">Consequence engine</Typography><p>Operational, safety, environmental, and customer impact.</p></div><Badge tone="info">Explainable</Badge></div>
+        <div><span>03</span><div><Typography as="h3" variant="title">Response orchestration</Typography><p>People, access, procedures, materials, and approvals.</p></div><Badge tone="warning">Time aware</Badge></div>
+        <div><span>04</span><div><Typography as="h3" variant="title">Evidence record</Typography><p>Inspection, work, verification, audit, and learning.</p></div><Badge tone="success">Traceable</Badge></div>
+      </section>
+      <section className="workflow-section"><div className="section-copy"><Eyebrow>Work in context</Eyebrow><Typography as="h2" variant="display">Response does not end at dispatch.</Typography></div><Paper elevation="none"><Toolbar label="Response workflow"><Typography variant="title">North region response board</Typography><Badge tone="danger">2 critical</Badge></Toolbar><WorkflowBoard columns={workColumns} density="comfortable" onItemClick={() => undefined} /></Paper></section>
+      <section className="integration-band" data-corva-theme="concept-dark"><div><Eyebrow>Fits the environment you already operate</Eyebrow><Typography as="h2" variant="display">Connect without replacing everything.</Typography></div><div className="integration-list"><span>SCADA</span><span>EAM</span><span>GIS</span><span>CMMS</span><span>Weather</span><span>ERP</span><span>IoT</span><span>Document control</span></div></section>
     </div>
   );
 }
-function QuoteBlock({
-  quote,
-  person,
-  role,
-  image,
-}: {
-  quote: string;
-  person: string;
-  role: string;
-  image: string;
-}) {
+
+function IndustriesPage({ openContact }: { openContact: () => void }) {
   return (
-    <blockquote className="quote-block">
-      <Typography variant="subtitle">“{quote}”</Typography>
-      <footer>
-        <img src={image} alt={`${person}, ${role}`} loading="lazy" />
-        <div>
-          <strong>{person}</strong>
-          <span>{role}</span>
-        </div>
-      </footer>
-    </blockquote>
+    <div className="page-shell industries-page">
+      <PageLead eyebrow="Industries" title="Different networks. The same obligation to keep moving." body="Asterline adapts its operating model to the physics, risks, work practices, and regulatory evidence of each infrastructure domain." marker="02 / Network sectors" markerIcon={<Icon name="chartNetwork" />} details={["Energy and utilities", "Transit and logistics", "Water and civic systems"]} />
+      <section className="industry-profile">
+        <div className="section-copy"><Eyebrow>One model, different physics</Eyebrow><Typography as="h2" variant="display">The operating profile changes with the network.</Typography><Typography variant="body">Every deployment weights condition, access, consequence, and verification around the realities of the sector. The shared model never erases what makes each network distinct.</Typography></div>
+        <Paper className="analysis-chart" elevation="none"><Chart label="Cross-sector operating profile" type="radar" animated controls={["data-table", "download"]} domain={[0, 100]} height={420} showLegend showPoints xKey="dimension" data={[{ dimension: "Condition", energy: 94, transit: 72, civic: 81 }, { dimension: "Access", energy: 76, transit: 95, civic: 68 }, { dimension: "Consequence", energy: 91, transit: 88, civic: 84 }, { dimension: "Weather", energy: 86, transit: 62, civic: 93 }, { dimension: "Evidence", energy: 79, transit: 83, civic: 96 }]} series={[{ key: "energy", label: "Energy" }, { key: "transit", label: "Transit" }, { key: "civic", label: "Water and civic" }]} /></Paper>
+      </section>
+      <section className="industry-feature industry-energy"><img src={image("asterline-wind-field.png")} alt="Offshore wind turbine inspection" /><div><Eyebrow>Energy</Eyebrow><Typography as="h2" variant="display">More output. Less avoidable exposure.</Typography><p>Coordinate renewable generation, substations, storage, and transmission around condition and consequence.</p><ul><li>Predictive asset health</li><li>Weather-window planning</li><li>Grid consequence modeling</li><li>Field evidence and compliance</li></ul><Button variant="secondary" size="lg" onClick={openContact}>Talk with an energy specialist <Icon name="arrowRight" /></Button></div></section>
+      <section className="industry-feature industry-transit"><img src={image("asterline-control-room.png")} alt="Transit network control room" /><div><Eyebrow>Transit</Eyebrow><Typography as="h2" variant="display">Protect the timetable without hiding the tradeoffs.</Typography><p>Bring fleet, track, signals, stations, crews, and passenger impact into the same decision.</p><ul><li>Service-impact forecasting</li><li>Possession and access planning</li><li>Fleet health and dispatch</li><li>Incident coordination</li></ul><Button variant="secondary" size="lg" onClick={openContact}>Talk with a transit specialist <Icon name="arrowRight" /></Button></div></section>
+      <section className="industry-feature industry-water"><img src={image("asterline-city-network.png")} alt="Urban water and transport infrastructure" /><div><Eyebrow>Water and civic systems</Eyebrow><Typography as="h2" variant="display">Operate beyond the asset boundary.</Typography><p>Understand how pumps, treatment, storage, drainage, roads, and communities influence one another.</p><ul><li>Pressure and flow anomalies</li><li>Flood and weather readiness</li><li>Critical-customer protection</li><li>Capital planning evidence</li></ul><Button variant="secondary" size="lg" onClick={openContact}>Talk with a civic systems specialist <Icon name="arrowRight" /></Button></div></section>
+      <section className="closing-cta"><Eyebrow>Built around your network</Eyebrow><Typography as="h2" variant="display">Start with one consequential operating problem.</Typography><Button variant="primary" size="lg" onClick={openContact}>Scope the first deployment</Button></section>
+    </div>
   );
 }
-function CompactRecord({
-  row,
-  onOpen,
-}: {
-  row: (typeof collectionRows)[number];
-  onOpen: () => void;
-}) {
+
+function CustomersPage({ openContact }: { openContact: () => void }) {
+  const stories = [
+    { id: "metro", label: "Metro East", content: <article className="carousel-story"><img src={image("asterline-city-network.png")} alt="Metro East urban network" /><div><Eyebrow>Transit and civic infrastructure</Eyebrow><Typography as="h2" variant="display">One river. Four networks. Zero shared blind spots.</Typography><p>A joint operating model gave transit, power, drainage, and bridge teams a single view of construction-season consequence.</p><div className="story-stats"><Metric label="Interruptions" value="-27%" note="year over year" /><Metric label="Callouts" value="-41%" note="within six months" /></div></div></article> },
+    { id: "northshore", label: "Northshore Energy", content: <article className="carousel-story"><img src={image("asterline-wind-field.png")} alt="Northshore Energy offshore operations" /><div><Eyebrow>Offshore wind</Eyebrow><Typography as="h2" variant="display">Maintenance that moves with the weather.</Typography><p>Northshore aligned condition risk, vessel access, parts, and specialist crews across 214 offshore turbines.</p><div className="story-stats"><Metric label="Lost generation" value="-18%" note="in the first year" /><Metric label="First visits" value="94%" note="completed as planned" /></div></div></article> },
+    { id: "port", label: "Port Meridian", content: <article className="carousel-story"><img src={image("asterline-port-hero.png")} alt="Port Meridian intermodal terminal" /><div><Eyebrow>Intermodal logistics</Eyebrow><Typography as="h2" variant="display">Reliability across every handoff.</Typography><p>Port Meridian connected crane, rail, gate, yard, and berth operations around throughput consequence.</p><div className="story-stats"><Metric label="Unplanned delay" value="-33%" note="across the terminal" /><Metric label="Throughput" value="+11%" note="without new equipment" /></div></div></article> },
+  ];
   return (
-    <article className="compact-record">
-      <div>
-        <span className="eyebrow">{row.accession}</span>
-        <Typography as="h3" variant="title">
-          {row.object}
-        </Typography>
-        <Typography variant="caption">
-          {row.maker}, {row.year} · {row.medium}
-        </Typography>
+    <div className="page-shell customers-page">
+      <PageLead eyebrow="Customer outcomes" title="Measured in service kept, not screens shipped." body="Asterline deployments begin with a live operating problem and remain accountable to the result." marker="03 / Field proof" markerIcon={<Icon name="verified" />} details={["2.1 million assets", "31 countries", "12.6 million verified actions"]} />
+      <Carousel className="customer-carousel" label="Customer stories" items={stories} />
+      <section className="outcome-ledger"><Metric label="Avoided downtime" value="1.9M hrs" note="across deployed networks" /><Metric label="Planning lead time" value="+38 min" note="median improvement" /><Metric label="Field completion" value="91%" note="on the first visit" /><Metric label="Verified actions" value="12.6M" note="retained with evidence" /></section>
+      <section className="customer-proof">
+        <Paper className="analysis-chart" elevation="none"><Chart label="Avoided service interruption share by network" type="donut" animated controls={["data-table", "download"]} height={380} showLegend xKey="portfolio" data={[{ portfolio: "Avoided hours", energy: 34, transit: 27, water: 21, ports: 18 }]} series={[{ key: "energy", label: "Energy" }, { key: "transit", label: "Transit" }, { key: "water", label: "Water" }, { key: "ports", label: "Ports" }]} /></Paper>
+        <div className="section-copy"><Eyebrow>Portfolio evidence</Eyebrow><Typography as="h2" variant="display">Reliability gains show up across the whole network.</Typography><Typography variant="body">The strongest programs do not optimize one asset class in isolation. They connect operating context across the services, handoffs, and dependencies that customers actually experience.</Typography><div className="proof-note"><Icon name="shieldCheck" /><span>Outcomes independently reviewed against each operator's pre-deployment baseline.</span></div></div>
+      </section>
+      <section className="customer-quote-grid"><blockquote>“Asterline gave engineering and operations a shared language for consequence.”<cite>Tom Adeyemi, Cedar Grid</cite></blockquote><blockquote>“The field team gets the reason, not just the work order.”<cite>Leila Morgan, Northshore Energy</cite></blockquote></section>
+      <section className="closing-cta"><Eyebrow>Your first operating problem</Eyebrow><Typography as="h2" variant="display">Make the business case with your own network data.</Typography><Button variant="primary" size="lg" onClick={openContact}>Plan a working session</Button></section>
+    </div>
+  );
+}
+
+const insightArticles = [
+  { type: "Field note", title: "Why condition is not consequence", summary: "A practical model for deciding when uncertain signals still require action.", time: "8 min", image: "asterline-wind-field.png" },
+  { type: "Research", title: "The 2026 network resilience index", summary: "What 31 infrastructure operators reveal about coordination, evidence, and recovery.", time: "24 min", image: "asterline-city-network.png" },
+  { type: "Operator guide", title: "Designing an effective control-room handoff", summary: "A clear operating pattern for preserving context across shifts and teams.", time: "11 min", image: "asterline-control-room.png" },
+  { type: "Case briefing", title: "Planning access across an intermodal terminal", summary: "How consequence modeling changed maintenance windows at Port Meridian.", time: "7 min", image: "asterline-port-hero.png" },
+  { type: "Technical brief", title: "From telemetry to defensible evidence", summary: "A traceable path from anomaly detection to verified closeout.", time: "15 min", image: "asterline-control-room.png" },
+  { type: "Perspective", title: "The network is the unit of reliability", summary: "Asset optimization is not enough when service depends on connected systems.", time: "6 min", image: "asterline-city-network.png" },
+];
+
+function InsightsPage() {
+  const [query, setQuery] = React.useState("");
+  const [topic, setTopic] = React.useState("all");
+  const filtered = insightArticles.filter((article) => (topic === "all" || article.type.toLowerCase().includes(topic)) && `${article.title} ${article.summary}`.toLowerCase().includes(query.toLowerCase()));
+  return (
+    <div className="page-shell insights-page">
+      <PageLead eyebrow="Asterline intelligence" title="For people who operate the real world." body="Research, field practice, and operating patterns from the networks carrying energy, people, water, and goods." marker="04 / September 2026" markerIcon={<Icon name="fileChartColumn" />} details={["Field note 09", "Resilience index", "Operator briefing series"]} />
+      <section className="metrics-dashboard">
+        <header className="dashboard-heading"><div><Eyebrow>Network pulse / 31 operators</Eyebrow><Typography as="h2" variant="display">What infrastructure leaders are seeing now.</Typography><Typography variant="body">A rolling view of exposure, readiness, response, and evidence across participating networks.</Typography></div><div className="dashboard-controls"><Select label="Comparison period" defaultValue="quarter" options={[{ label: "Current quarter", value: "quarter" }, { label: "Previous quarter", value: "previous" }, { label: "Rolling 12 months", value: "year" }]} /><Button variant="secondary"><Icon name="download" /> Export briefing</Button></div></header>
+        <div className="data-card-grid">
+          <DataCard label="Network availability" value="97.8%" note="Across energy, transit, water, and ports" badge="+0.7 pts" tone="success" progress={98} icon={<Icon name="activity" />} />
+          <DataCard label="Priority exposure" value="$18.4M" note="Modeled consequence currently above plan" badge="6 networks" tone="warning" progress={64} icon={<Icon name="risk" />} />
+          <DataCard label="First-visit completion" value="91%" note="Field responses completed without return work" badge="+8% YoY" tone="success" progress={91} icon={<Icon name="clipboardCheck" />} />
+          <DataCard label="Evidence complete" value="86%" note="Actions closed with verified field evidence" badge="12.6M actions" tone="info" progress={86} icon={<Icon name="verified" />} />
+        </div>
+        <div className="comparison-grid">
+          <Paper className="comparison-panel" elevation="none"><div className="panel-heading"><div><Eyebrow>Peer comparison</Eyebrow><Typography as="h3" variant="title">Response readiness by network</Typography></div><Badge tone="success">Above benchmark</Badge></div><Chart label="Current response readiness compared with sector benchmark" type="bar" animated controls={["data-table", "download"]} domain={[0, 100]} height={340} showGrid showLegend xKey="network" data={[{ network: "Energy", current: 92, benchmark: 81 }, { network: "Transit", current: 84, benchmark: 78 }, { network: "Water", current: 88, benchmark: 74 }, { network: "Ports", current: 79, benchmark: 72 }]} series={[{ key: "current", label: "Asterline operators" }, { key: "benchmark", label: "Sector benchmark" }]} /></Paper>
+          <Paper className="comparison-panel" elevation="none"><div className="panel-heading"><div><Eyebrow>Decision velocity</Eyebrow><Typography as="h3" variant="title">Median minutes from signal to owner</Typography></div><Badge tone="info">34 min gained</Badge></div><Chart label="Median signal to owner time compared with previous baseline" type="line" animated controls={["data-table", "download"]} height={340} showGrid showLegend showPoints xKey="month" data={[{ month: "Apr", current: 28, baseline: 48 }, { month: "May", current: 24, baseline: 47 }, { month: "Jun", current: 21, baseline: 46 }, { month: "Jul", current: 18, baseline: 47 }, { month: "Aug", current: 15, baseline: 46 }, { month: "Sep", current: 12, baseline: 46 }]} series={[{ key: "current", label: "Current operating model" }, { key: "baseline", label: "Previous baseline" }]} /></Paper>
+        </div>
+      </section>
+      <section className="insight-feature"><img src={image("asterline-wind-field.png")} alt="Offshore wind engineers inspecting a turbine above the North Sea" /><div><Eyebrow>Featured field note / 8 min</Eyebrow><Typography as="h2" variant="display">Why condition is not consequence.</Typography><Typography variant="subtitle">A practical operating model for deciding when an uncertain signal still requires immediate action.</Typography><Button variant="secondary" size="lg">Read the field note <Icon name="arrowRight" /></Button></div></section>
+      <section className="insight-tools"><SearchForm label="Search intelligence" placeholder="Search research, field notes, and guides" submitLabel="Search" onSubmit={setQuery} /><ToggleGroup label="Filter by publication type" value={topic} onValueChange={setTopic} options={[{ label: "All", value: "all" }, { label: "Research", value: "research" }, { label: "Field", value: "field" }, { label: "Guides", value: "guide" }]} /></section>
+      {filtered.length ? <section className="insight-grid">{filtered.map((article) => <article className="insight-article" key={article.title}><img src={image(article.image)} alt="" /><div><span><Eyebrow>{article.type}</Eyebrow><Typography variant="caption">{article.time}</Typography></span><Typography as="h2" variant="title">{article.title}</Typography><Typography variant="body">{article.summary}</Typography><Link href="#article" onClick={(event) => event.preventDefault()}>Read article</Link></div></article>)}</section> : <EmptyState title="No intelligence matches that search" description="Try a broader term or return to all publication types." icon={<Icon name="search" />} action={<Button variant="primary" onClick={() => { setQuery(""); setTopic("all"); }}>Clear filters</Button>} />}
+      <section className="newsletter-band" data-corva-theme="concept-dark"><div><Eyebrow>Operating signals</Eyebrow><Typography as="h2" variant="display">One useful briefing. Once a month.</Typography></div><div><TextInput label="Work email" type="email" placeholder="you@organization.com" /><Checkbox label="I agree to receive Asterline research and event updates." /><Button variant="primary" size="lg">Subscribe</Button></div></section>
+    </div>
+  );
+}
+
+function CompanyPage({ openContact }: { openContact: () => void }) {
+  return (
+    <div className="page-shell company-page">
+      <PageLead eyebrow="Company" title="The physical world deserves better operating software." body="Asterline is built by infrastructure engineers, operators, product designers, and applied scientists who believe reliability is a shared discipline." marker="05 / Asterline" markerIcon={<Icon name="compass" />} details={["Founded in 2018", "Built alongside operators", "Remote across 12 countries"]} />
+      <section className="company-manifesto"><img src={image("asterline-control-room.png")} alt="Infrastructure operations team at work" /><blockquote>We build for the people who carry consequence long after a software decision ships.</blockquote></section>
+      <section className="company-values"><div><span>01</span><Typography as="h2" variant="title">Operational truth over software theater.</Typography><p>The product must clarify the real system, not create a more attractive version of uncertainty.</p></div><div><span>02</span><Typography as="h2" variant="title">Context travels with the work.</Typography><p>No one should receive an action without understanding the reason, consequence, and evidence.</p></div><div><span>03</span><Typography as="h2" variant="title">Trust is designed into the record.</Typography><p>Models explain themselves, decisions remain reviewable, and field proof closes the loop.</p></div></section>
+      <section className="company-history"><div className="section-copy"><Eyebrow>Built alongside operators</Eyebrow><Typography as="h2" variant="display">A decade of learning how networks actually fail and recover.</Typography></div><Timeline events={[{ id: "2018", label: "Asterline founded", meta: "2018", description: "First reliability model developed with a regional power operator." }, { id: "2020", label: "Field orchestration launched", meta: "2020", description: "Decisions connected directly to crews, access, and evidence." }, { id: "2023", label: "Multi-network consequence", meta: "2023", description: "Transit, water, and energy dependencies entered one operating model." }, { id: "2026", label: "31 countries", meta: "Today", description: "2.1 million assets observed across critical physical networks." }]} /></section>
+      <section className="jobs-section"><div className="section-copy"><Eyebrow>Join Asterline</Eyebrow><Typography as="h2" variant="display">Work on software that has to hold up in the real world.</Typography></div><Accordion items={[{ id: "product", title: "Senior product designer, network operations", content: "Lead complex workflow design with operators across energy and transit. Remote within North American time zones." }, { id: "frontend", title: "Staff frontend engineer, data systems", content: "Build high-density, accessible operating interfaces and visualization infrastructure. Remote within US or Canada." }, { id: "reliability", title: "Infrastructure reliability specialist", content: "Translate operating practice into models, workflows, and deployment outcomes. Travel up to 25%." }]} /><Button variant="primary" size="lg" onClick={openContact}>Introduce yourself <Icon name="arrowRight" /></Button></section>
+    </div>
+  );
+}
+
+function CommandPage({ notify, openWork }: { notify: (message: string) => void; openWork: () => void }) {
+  const [section, setSection] = React.useState("overview");
+  const [query, setQuery] = React.useState("");
+  const rows = assetRows.filter((row) => Object.values(row).some((value) => String(value).toLowerCase().includes(query.toLowerCase())));
+  const sideItems = [
+    { id: "overview", label: "Network overview", icon: <Icon name="activity" /> },
+    { id: "assets", label: "Asset health", icon: <Icon name="database" />, badge: 2 },
+    { id: "work", label: "Work coordination", icon: <Icon name="workflow" />, badge: 6 },
+    { id: "planning", label: "Access planning", icon: <Icon name="calendar" /> },
+  ];
+  return (
+    <div className="command-shell">
+      <aside className="command-sidebar"><Sidebar activeId={section} heading="North region" label="Command center sections" items={sideItems} onSelect={setSection} footer={<Stack gap="sm"><Typography variant="caption">Deterministic preview</Typography><Badge tone="info">Synthetic data</Badge></Stack>} /></aside>
+      <div className="command-main">
+        <header className="command-head"><div><div className="command-kicker"><Eyebrow>Tuesday, September 1</Eyebrow><Badge tone="info">Deterministic preview · synthetic data</Badge></div><Typography as="h1" variant="display">North region</Typography><Typography variant="subtitle">Morning operating picture across energy, transit, water, and port networks.</Typography></div><Stack direction="row" gap="sm"><Button variant="secondary" onClick={() => notify("Brief exported to the operations record.")}><Icon name="download" /> Export brief</Button><Button variant="primary" onClick={openWork}>Create response</Button></Stack></header>
+        <ToggleGroup className="command-mobile-nav" label="Command center section" value={section} onValueChange={setSection} options={sideItems.map((item) => ({ label: String(item.label), value: item.id }))} />
+        <section className="command-metrics"><Metric label="Network availability" value="97.4%" note="+0.6% since yesterday" /><Metric label="Priority exposure" value="$2.8M" note="2 assets need action" /><Metric label="Work in field" value="18" note="6 complete before noon" /><Metric label="Weather window" value="7h 20m" note="North Sea access" /></section>
+        <section className="command-alerts"><Alert tone="danger" title="SUB-09 transformer temperature rising">Confidence 92%. Consequence reaches Metro East feeder capacity in 3 hours 40 minutes.</Alert><Alert tone="warning" title="TRK-067 inspection window closes at 10:20">Crew 14 is on site. Isolation approval is still pending.</Alert></section>
+        <section className="command-charts"><Paper elevation="none"><div className="panel-heading"><div><Eyebrow>Consequence exposure</Eyebrow><Typography as="h2" variant="title">Risk entering the operating window</Typography></div><Badge tone="warning">2 above plan</Badge></div><Chart label="Consequence exposure over twelve hours" type="area" animated showGrid showLegend showPoints showTable height={310} xKey="time" data={[{ time: "06", observed: 18, planned: 22 }, { time: "08", observed: 24, planned: 22 }, { time: "10", observed: 31, planned: 23 }, { time: "12", observed: 27, planned: 24 }, { time: "14", observed: 21, planned: 23 }, { time: "16", observed: 16, planned: 21 }]} series={[{ key: "observed", label: "Observed" }, { key: "planned", label: "Planned" }]} /></Paper><Paper elevation="none"><div className="panel-heading"><div><Eyebrow>Response readiness</Eyebrow><Typography as="h2" variant="title">Regional response confidence</Typography></div><Badge tone="success">On plan</Badge></div><Chart label="Regional response readiness out of 100" type="gauge" animated controls={["data-table"]} domain={[0, 100]} showTable height={310} xKey="metric" data={[{ metric: "Readiness", value: 86 }]} series={[{ key: "value", label: "Ready" }]} /></Paper></section>
+        <section className="asset-register"><div className="register-heading"><div><Eyebrow>Asset health</Eyebrow><Typography as="h2" variant="title">Priority operating register</Typography></div><SearchForm label="Search asset register" placeholder="Asset, network, signal, owner" submitLabel="Search" onSubmit={setQuery} /></div><DataGrid caption="North region priority asset register" columns={assetColumns} rows={rows} sortable filterable pageable pageSize={6} onRowClick={({ row }) => notify(`${row.asset} opened.`)} emptyState={<EmptyState title="No assets match this search" description="Clear the query or search by asset, network, class, signal, or owner." icon={<Icon name="search" />} action={<Button variant="primary" onClick={() => setQuery("")}>Clear search</Button>} />} /></section>
+        <section className="command-lower"><Paper elevation="none"><div className="panel-heading"><div><Eyebrow>Field coordination</Eyebrow><Typography as="h2" variant="title">Response board</Typography></div><Button variant="secondary" size="sm" onClick={openWork}>Add response</Button></div><WorkflowBoard columns={workColumns} density="compact" onItemClick={({ item }) => notify(`${item.title} selected.`)} /></Paper><Paper elevation="none"><div className="panel-heading"><div><Eyebrow>Access plan</Eyebrow><Typography as="h2" variant="title">September 2026</Typography></div></div><Calendar label="September 2026 access calendar" monthLabel="September 2026" weekdays={["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]} days={monthDays} onDaySelect={(day) => notify(`September ${day.label} selected.`)} /></Paper></section>
       </div>
-      <dl>
-        <div>
-          <dt>Location</dt>
-          <dd>{row.location}</dd>
-        </div>
-        <div>
-          <dt>Status</dt>
-          <dd>
-            <Badge
-              tone={
-                row.status === "Treatment"
-                  ? "warning"
-                  : row.status === "On view"
-                    ? "success"
-                    : "neutral"
-              }
-            >
-              {row.status}
-            </Badge>
-          </dd>
-        </div>
-      </dl>
-      <Button variant="secondary" onClick={onOpen}>
-        Open record
-      </Button>
-    </article>
+    </div>
+  );
+}
+
+function SitePage({ route, navigate, openContact, notify, openWork }: { route: Route; navigate: Navigate; openContact: () => void; notify: (message: string) => void; openWork: () => void }) {
+  if (route === "platform") return <PlatformPage navigate={navigate} />;
+  if (route === "industries") return <IndustriesPage openContact={openContact} />;
+  if (route === "customers") return <CustomersPage openContact={openContact} />;
+  if (route === "insights") return <InsightsPage />;
+  if (route === "company") return <CompanyPage openContact={openContact} />;
+  if (route === "command") return <CommandPage notify={notify} openWork={openWork} />;
+  return <HomePage navigate={navigate} openContact={openContact} />;
+}
+
+export function App() {
+  const [route, setRoute] = React.useState<Route>(readRoute);
+  const [mode, setMode] = React.useState<ThemeMode>("light");
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [contactOpen, setContactOpen] = React.useState(false);
+  const [workOpen, setWorkOpen] = React.useState(false);
+  const [notice, setNotice] = React.useState("");
+
+  React.useEffect(() => {
+    const onPopState = () => setRoute(readRoute());
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  React.useEffect(() => {
+    document.documentElement.dataset.corvaTheme = `concept-${mode}`;
+  }, [mode]);
+
+  const navigate = React.useCallback((next: Route) => {
+    window.history.pushState({}, "", routePath(next));
+    setRoute(next);
+    setDrawerOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  const publicNav = navItems.filter((item) => item.id !== "home" && item.id !== "command");
+
+  return (
+    <Box className="site-root" surface="none" padding="none" data-corva-theme={`concept-${mode}`}>
+      <header className="site-header">
+        <a className="asterline-brand" href={routePath("home")} onClick={(event) => { event.preventDefault(); navigate("home"); }} aria-label="Asterline home"><span className="asterline-symbol"><Icon name="activity" /></span><strong>Asterline</strong></a>
+        <MenuBar className="desktop-nav" label="Primary navigation" items={publicNav.map((item) => ({ id: item.id, label: item.label, current: route === item.id, onSelect: () => navigate(item.id) }))} />
+        <div className="header-actions"><Switch label="Dark" checked={mode === "dark"} onChange={() => setMode(mode === "dark" ? "light" : "dark")} /><Button className="contact-button" variant="secondary" size="sm" onClick={() => setContactOpen(true)}>Talk to us</Button><Button className="command-button" variant="primary" size="sm" onClick={() => navigate("command")}>Command center</Button><Button className="mobile-menu" variant="secondary" size="sm" aria-label="Open navigation" onClick={() => setDrawerOpen(true)}><Icon name="menu" /></Button></div>
+      </header>
+
+      <main><SitePage route={route} navigate={navigate} openContact={() => setContactOpen(true)} notify={setNotice} openWork={() => setWorkOpen(true)} /></main>
+
+      {route !== "command" && <footer className="site-footer" data-corva-theme="concept-dark"><div className="footer-brand"><strong>Asterline</strong><p>Infrastructure intelligence for networks that cannot pause.</p></div><div><Typography variant="caption">Explore</Typography><Button variant="secondary" size="sm" onClick={() => navigate("platform")}>Platform</Button><Button variant="secondary" size="sm" onClick={() => navigate("customers")}>Customers</Button><Button variant="secondary" size="sm" onClick={() => navigate("insights")}>Intelligence</Button></div><div><Typography variant="caption">Company</Typography><Button variant="secondary" size="sm" onClick={() => navigate("company")}>About</Button><Button variant="secondary" size="sm" onClick={() => setContactOpen(true)}>Contact</Button><Link href="https://corvaui.com/" target="_blank" rel="noreferrer">Interface system: CorvaUI</Link></div><div className="footer-system"><img src={`${deploymentBase()}/corvaui-logo-reversed.svg`} alt="CorvaUI" /><span>React demonstration environment</span></div></footer>}
+
+      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} title="Asterline navigation"><Sidebar activeId={route} heading="Asterline" label="Site pages" items={navItems} onSelect={(id) => navigate(id as Route)} /></Drawer>
+
+      <Dialog open={contactOpen} onClose={() => setContactOpen(false)} title="Plan an Asterline working session" description="Bring one operating problem. We will map the data, decisions, people, and evidence around it." actions={<Stack direction="row" gap="sm"><Button variant="secondary" onClick={() => setContactOpen(false)}>Cancel</Button><Button variant="primary" onClick={() => { setContactOpen(false); setNotice("Working session request recorded."); }}>Request session</Button></Stack>}><Grid columns="two" gap="md"><TextInput label="Name" placeholder="Your name" /><TextInput label="Work email" type="email" placeholder="you@organization.com" /><Select label="Network" defaultValue="energy" options={[{ label: "Energy", value: "energy" }, { label: "Transit", value: "transit" }, { label: "Water or civic", value: "water" }, { label: "Port or logistics", value: "port" }]} /><Select label="Region" defaultValue="north-america" options={[{ label: "North America", value: "north-america" }, { label: "Europe", value: "europe" }, { label: "Asia Pacific", value: "apac" }]} /></Grid><Textarea label="What operating problem should we examine?" rows={5} /></Dialog>
+
+      <Modal open={workOpen} onClose={() => setWorkOpen(false)} title="Create response"><Stack gap="md"><TextInput label="Response title" defaultValue="Investigate priority signal" /><Grid columns="two" gap="md"><Select label="Network" defaultValue="grid" options={[{ label: "Cedar Grid", value: "grid" }, { label: "Metro East", value: "transit" }, { label: "North Sea Wind", value: "wind" }]} /><Select label="Priority" defaultValue="critical" options={[{ label: "Critical", value: "critical" }, { label: "Watch", value: "watch" }, { label: "Planned", value: "planned" }]} /><DatePicker label="Target date" defaultValue="2026-09-01" /><TimePicker label="Access time" defaultValue="10:20" /></Grid><RadioGroup label="Response path" name="response-path" defaultValue="field" options={[{ label: "Field response", value: "field", description: "Dispatch a qualified crew with evidence requirements" }, { label: "Remote validation", value: "remote", description: "Confirm the signal before dispatch" }]} /><Slider label="Minimum confidence" min={50} max={100} defaultValue={80} /><NumberField label="Crew size" min={1} max={12} defaultValue={3} /><Textarea label="Operating context" rows={4} defaultValue="Maintain feeder capacity while the asset is isolated. Confirm thermal decay before return to service." /><FileUpload label="Response evidence" actionLabel="Attach procedure" /><Checkbox label="Require control-room approval before dispatch" defaultChecked /><Stack direction="row" gap="sm"><Button variant="secondary" onClick={() => setWorkOpen(false)}>Cancel</Button><Button variant="primary" onClick={() => { setWorkOpen(false); setNotice("Response created and routed for approval."); }}>Create response</Button></Stack></Stack></Modal>
+
+      <Snackbar open={Boolean(notice)} action={<Button variant="secondary" size="sm" onClick={() => setNotice("")}>Dismiss</Button>}>{notice}</Snackbar>
+    </Box>
   );
 }
