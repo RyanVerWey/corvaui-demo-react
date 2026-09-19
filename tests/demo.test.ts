@@ -4,6 +4,13 @@ import { describe, expect, it } from "vitest";
 const app = readFileSync(new URL("../src/App.tsx", import.meta.url), "utf8");
 const styles = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
 const main = readFileSync(new URL("../src/main.tsx", import.meta.url), "utf8");
+const readme = readFileSync(new URL("../README.md", import.meta.url), "utf8");
+const product = readFileSync(new URL("../PRODUCT.md", import.meta.url), "utf8");
+const design = readFileSync(new URL("../DESIGN.md", import.meta.url), "utf8");
+const designJson = JSON.parse(readFileSync(new URL("../DESIGN.json", import.meta.url), "utf8"));
+const brief = readFileSync(new URL("../docs/REDESIGN-BRIEF.md", import.meta.url), "utf8");
+const coverage = readFileSync(new URL("../docs/COMPONENT-COVERAGE.md", import.meta.url), "utf8");
+const attribution = readFileSync(new URL("../public/images/ATTRIBUTION.md", import.meta.url), "utf8");
 
 describe("Asterline React demo contract", () => {
   it("keeps CorvaUI packages and semantic tokens authoritative", () => {
@@ -56,5 +63,28 @@ describe("Asterline React demo contract", () => {
     expect(app).toContain("Current response readiness compared with sector benchmark");
     expect(app).toContain("Median signal to owner time compared with previous baseline");
     expect(styles).toContain(".comparison-grid");
+  });
+
+  it("keeps product documentation aligned with the Asterline source", () => {
+    for (const document of [readme, product, design, brief, coverage]) {
+      expect(document).toContain("Asterline");
+      expect(document).not.toContain("Morrow Archive");
+    }
+    expect(readme).toContain("six public routes and a separate Command Center");
+    expect(designJson.title).toBe("Design System: Asterline");
+    expect(designJson.narrative.northStar).toBe("The living network");
+
+    const importBlock = app.match(/import \{([\s\S]*?)\} from "@corvaui\/react";/)?.[1] ?? "";
+    const componentImports = importBlock
+      .split(",")
+      .map((name) => name.trim())
+      .filter((name) => name && !name.startsWith("type "));
+    expect(componentImports).toHaveLength(42);
+    expect(coverage).toContain("Components used in Asterline: **42**");
+    expect(coverage).toContain("Components intentionally not forced into this product: **25**");
+
+    for (const asset of ["asterline-port-hero.png", "asterline-wind-field.png", "asterline-control-room.png", "asterline-city-network.png"]) {
+      expect(attribution).toContain(asset);
+    }
   });
 });

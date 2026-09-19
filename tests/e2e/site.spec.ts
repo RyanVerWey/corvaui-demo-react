@@ -6,6 +6,13 @@ async function expectNoPageOverflow(page: Page) {
   expect(overflow).toBeLessThanOrEqual(1);
 }
 
+async function waitForFiniteMotion(page: Page) {
+  await page.evaluate(async () => {
+    const animations = document.getAnimations().filter((animation) => animation.effect?.getTiming().iterations !== Infinity);
+    await Promise.allSettled(animations.map((animation) => animation.finished));
+  });
+}
+
 test("home behaves like a complete infrastructure product site", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1, name: /Keep the world/ })).toBeVisible();
@@ -68,7 +75,7 @@ test("theme, contact dialog, and mobile drawer work", async ({ page }) => {
 
 test("intelligence search exposes a recoverable empty state", async ({ page }) => {
   await page.goto("/insights");
-  await page.getByRole("searchbox", { name: "Search intelligence" }).fill("no-matching-briefing");
+  await page.getByRole("textbox", { name: "Search intelligence" }).fill("no-matching-briefing");
   await page.getByRole("button", { name: "Search", exact: true }).click();
   await expect(page.getByRole("heading", { name: "No intelligence matches that search" })).toBeVisible();
   await page.getByRole("button", { name: "Clear filters" }).click();
@@ -91,10 +98,12 @@ test("all routes and themes have no serious or critical accessibility violations
   for (const mode of ["light", "dark"] as const) {
     for (const route of ["/", "/platform", "/industries", "/customers", "/insights", "/company", "/command"]) {
       await page.goto(route);
-      if (mode === "dark") {
+      const themeRoot = page.locator("#root > [data-corva-theme]");
+      if ((await themeRoot.getAttribute("data-corva-theme")) !== `concept-${mode}`) {
         await page.locator(".corva-switch").click();
-        await page.waitForTimeout(400);
       }
+      await expect(themeRoot).toHaveAttribute("data-corva-theme", `concept-${mode}`);
+      await waitForFiniteMotion(page);
       const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
       const severe = results.violations.filter((violation) => violation.impact === "serious" || violation.impact === "critical");
       expect(severe, `${mode} ${route}: ${severe.map((item) => item.id).join(", ")}`).toEqual([]);

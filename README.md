@@ -1,6 +1,6 @@
-# Morrow Archive · CorvaUI React flagship
+# Asterline · CorvaUI React flagship
 
-Morrow Archive is a private local showcase for the published `@corvaui/react` and `@corvaui/tokens` packages. It presents a museum exhibition and collection-operations product across eight routes, with complete mobile composition, working interactions, feedback states, light and dark modes, accessibility checks, and broad component coverage.
+Asterline is a private review showcase for the published `@corvaui/react` and `@corvaui/tokens` packages. It presents an infrastructure-intelligence product across six public routes and a separate Command Center, with responsive composition, working interactions, feedback states, Concept light/dark themes, accessibility checks, and realistic synthetic operating data.
 
 ## Local preview
 
@@ -9,8 +9,14 @@ npm install
 npm run dev
 ```
 
-The application uses the published `concept-light` and `concept-dark` themes unchanged. Local CSS controls composition, spacing, responsive behavior, media treatment, and motion only.
+Run the complete local gate with:
 
-See `docs/REDESIGN-BRIEF.md` for the product and responsive system, and `docs/COMPONENT-COVERAGE.md` for the complete 67-component audit.
+```sh
+npm test
+```
 
-This repository is intentionally not deployed until the visual direction is approved.
+The application uses the published `concept-light` and `concept-dark` themes unchanged. CorvaUI owns component visuals and behavior; local CSS is limited to composition, spacing, responsive layout, editorial media, and restrained motion.
+
+See `PRODUCT.md` for the product model, `DESIGN.md` and `docs/REDESIGN-BRIEF.md` for the visual and responsive system, `docs/COMPONENT-COVERAGE.md` for the audited package usage, and `public/images/ATTRIBUTION.md` for asset provenance.
+
+Command Center data is deterministic and synthetic. Real server-backed contract integration remains separate until the shared data and ASP.NET Core packages are published. Production promotion remains held for explicit visual approval.

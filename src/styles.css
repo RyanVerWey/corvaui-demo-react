@@ -1036,6 +1036,10 @@ img {
   background: var(--corva-color-surface);
 }
 
+.asset-register .corva-data-grid .corva-table {
+  min-width: 56rem;
+}
+
 .register-heading .corva-search-form {
   width: min(30rem, 100%);
 }
