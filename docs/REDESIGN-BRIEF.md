@@ -1,68 +1,54 @@
-# Morrow Archive redesign brief
+# Asterline redesign brief
 
 ## Feature summary
 
-Morrow Archive is a production-depth museum exhibition and collection-operations product for registrars, conservators, curators, art handlers, and operations leads. It combines a public editorial exhibition entry with dense working routes for collection research, loan coordination, conservation evidence, installation planning, institutional settings, and CorvaUI integration proof.
+Asterline is an infrastructure-intelligence product for teams responsible for energy, transit, water, ports, and connected civic systems. Six editorial public routes explain the product and its outcomes; a separate Command Center proves dense operational discovery, triage, scheduling, response creation, evidence handling, and feedback states.
 
 ## Primary user action
 
-Understand what needs attention next, then move an object, loan, conservation record, or installation task forward with clear evidence and feedback.
+Identify a consequential network signal, understand its operational context, and create or advance the response while keeping ownership and evidence visible.
 
 ## Design direction
 
-- **Color strategy:** Restrained product palette with a committed image-led editorial hero. Use the published `concept-light` and `concept-dark` themes unchanged.
-- **Scene sentence:** A registrar reviews a high-value outgoing loan on a tablet in a softly lit preparation gallery while installation crews work nearby and deadlines remain visible.
-- **North star:** The Living Register, inspired by museum collection ledgers, exhibition catalogues, architectural wayfinding, and specialist collection-management tools.
-- **Approved probes:** `docs/concepts/north-star-desktop.png` sets the image/meta/register composition. `docs/concepts/north-star-mobile.png` sets priority-first ordering, stacked evidence, bottom navigation, and touch action treatment.
+- **Color strategy:** Use the published `concept-light` and `concept-dark` themes unchanged. Documentary infrastructure media supplies material color; semantic CorvaUI roles carry status and action meaning.
+- **Scene sentence:** An infrastructure operator moves from a regional network picture into the exact asset, consequence, owner, and next action without losing context.
+- **North star:** The living network—connected, consequential, precise, and grounded in the physical systems the product helps operate.
+- **Visual language:** Large documentary media and open editorial composition on public routes; ruled, dense, highly scannable composition in Command Center.
 
 ## Scope
 
-- Production-ready, multi-page React showcase.
-- Interactive workflows and complete feedback states.
-- Mobile-first composition with compact, wide, tablet, and narrow viewport behavior.
-- Local preview only. Production deployment requires visual approval.
+- Seven-route React showcase: Home, Platform, Industries, Customers, Intelligence, Company, and Command Center.
+- Complete public storytelling plus operational workflows and feedback states.
+- Responsive composition with explicit desktop and 390px mobile verification.
+- Deterministic synthetic data only. Real server-backed contract adoption is a separate release-dependent slice.
+- Preview deployment only. Production promotion and custom-domain verification require explicit approval.
 
 ## Information architecture
 
-1. **Exhibition:** Immersive public entry, editorial story, installation progress, selected works, visitor programme.
-2. **Overview:** Operational readiness, risk, movement, team load, live alerts, loading and failure simulation.
-3. **Collection:** Search, taxonomy, hierarchy, sortable/filterable records, pagination, preview overlays, empty state.
-4. **Loans:** Workflow board, staged request form, transport and insurance detail, assignment, approval dialog.
-5. **Conservation:** Focused workspace, condition imagery, checklists, evidence upload, history, treatment notes.
-6. **Calendar:** Installation calendar, daily schedule, event timeline, crew and gallery filters.
-7. **Settings:** Workspace, notification, access, theme, thresholds, transfer list, validation and save feedback.
-8. **System proof:** Package/version evidence, component coverage, state controls, accessibility commitments, attribution.
+1. **Home:** Product promise, infrastructure context, clearly fictional scenario evidence, and entry to Command Center.
+2. **Platform:** Connected operating model, decision latency, and shared operational truth.
+3. **Industries:** Energy, transit, water, port, and civic-network use cases.
+4. **Customers:** Fictional outcomes, illustrative portfolio evidence, and scenario proof with no endorsement claim.
+5. **Intelligence:** Searchable research and a recoverable no-results state.
+6. **Company:** Product history, operating principles, roles, and contact workflow.
+7. **Command Center:** Asset discovery, sorting, filtering, paging, consequence charts, work orchestration, schedules, response creation, uploads, dialogs, and system feedback.
 
 ## Responsive system
 
-- **Base, below 40rem:** one-column working flow, 16px body text, 44px controls, bottom navigation, drawer navigation, stacked record rows, figures cropped for subject priority, primary action remains reachable.
-- **40rem to 63.99rem:** two-column sections where useful, compact menu bar, drawer for secondary navigation, charts and forms reflow without horizontal page overflow.
-- **64rem and above:** persistent left rail for product routes, full working canvas, dense tables/data grids, editorial hero with metadata rail.
-- Data tables remain locally scrollable only when semantic transformation would hide important relationships. The primary collection table uses a purpose-built mobile record list instead.
-- Overlays never exceed the viewport and actions remain visible above safe-area insets.
+- **Base, below 40rem:** single-column reading and working flow, disclosure navigation, touch-safe controls, locally scrolling dense components, and no page-level overflow.
+- **40rem to 63.99rem:** selective two-column sections, compact navigation, and reflowed operational panels.
+- **64rem and above:** full editorial compositions and a dense multi-panel Command Center.
+- Tables and grids may scroll inside their owned container; the document itself must not overflow.
+- Dialogs, drawers, and actions remain reachable within the viewport.
 
 ## Key states
 
-- Default, hover, focus, active, disabled.
-- Skeleton loading and bounded spinner saving.
-- Empty collection search with a recovery action.
-- Success snackbar after saved work.
-- Warning and error alerts with specific recovery guidance.
-- Field validation connected to labels and messages.
-- Dialog, modal, drawer, popover, menu, tooltip, and backdrop states.
-- Long labels, reduced motion, touch input, light theme, dark theme, and persisted preference.
+- Default, hover, focus, active, disabled, and reduced motion.
+- Deterministic loading, empty, warning, error, and success feedback.
+- Search recovery, filter reset, sorting, pagination, response creation, upload, schedule, workflow, dialog, modal, drawer, and snackbar behavior.
+- Light and dark themes without app-defined component colors.
+- Keyboard navigation, visible focus, accessible labels, and color-independent status meaning.
 
-## Mock fidelity inventory
+## CorvaUI ownership boundary
 
-| Visible ingredient | Implementation |
-| --- | --- |
-| Single dominant gallery scene | Generated local responsive image asset |
-| Exhibition metadata rail | Semantic definition list beside the hero |
-| Ruled collection register | CSS grid/dividers plus CorvaUI data components |
-| Compact institutional navigation | CorvaUI AppBar, MenuBar, Drawer, Sidebar, BottomNavigation |
-| Gold attention signals | Published theme warning/accent-strong semantics only |
-| Mobile priority ordering | CSS grid areas and dedicated compact record rendering |
-| Dense evidence rows | Semantic lists, tables, Timeline, ImageList |
-| Touch action tray | CorvaUI ButtonGroup, FloatingActionButton, and SpeedDial |
-
-The generated comps are not literalized as screenshots. Text, controls, tables, navigation, state, and accessibility remain semantic React.
+CorvaUI components, package CSS, tokens, events, accessibility behavior, and state contracts remain authoritative. Application CSS owns only composition, spacing, responsive placement, image crops, and restrained entrance motion. The demo does not recreate controls or introduce a competing visual layer.

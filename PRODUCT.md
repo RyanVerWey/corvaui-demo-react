@@ -1,33 +1,35 @@
 # Product
 
-## Register
+## Asterline
 
-product
-
-## Users
-
-Morrow Archive serves museum registrars, curators, conservators, exhibition producers, art handlers, and operations leads. They work across galleries, collection stores, loading docks, studios, and mobile devices while coordinating fragile objects, time-sensitive loans, condition evidence, transport, and public exhibitions. A secondary audience of designers and engineers evaluates the experience as a credible proof of CorvaUI's production breadth.
+Asterline is a fictional infrastructure-intelligence product concept for teams responsible for energy, transit, water, ports, and connected civic systems. This React demonstration presents a complete product narrative and working interface using synthetic organizations, people, metrics, testimonials, histories, and operating data. It does not represent a live service or customer endorsement. CorvaUI is the underlying interface system, not the subject of the fictional customer narrative.
 
 ## Product Purpose
 
-Morrow Archive is a unified exhibition and collection-operations platform. It connects editorial exhibition storytelling with collection research, loan pipelines, conservation work, installation schedules, operational analytics, and institutional settings. Success means users can understand risk quickly, complete high-stakes workflows confidently, and move between public narrative and dense operational detail without the interface feeling like a component gallery.
+Connect representative asset condition, network consequence, field work, weather, access, materials, and evidence in one operating picture. The fictional Asterline scenario shows how operators could identify meaningful change early, understand what is at stake, coordinate a complete response, and retain proof of the outcome.
 
-## Brand Personality
+## Primary Audiences
 
-Cultured, exacting, atmospheric. The voice is composed and specific, with the quiet confidence of a mature cultural institution and the operational clarity of a specialist tool. It should inspire curiosity without compromising task focus.
+- Network operations leaders
+- Reliability and asset-management teams
+- Control-room operators
+- Field engineering and maintenance teams
+- Infrastructure planning and resilience leaders
+- Technical buyers evaluating complex operational software
 
-## Anti-references
+## Experience Architecture
 
-Do not create a generic SaaS dashboard, shallow mock business, decorative card grid, nested-card composition, component specimen sheet, fake gradient aesthetic, glassmorphism system, oversized empty hero, excessive pill vocabulary, or space-filling decorative metrics. Do not repeat the field-service concept or its visual motifs. Do not hide mobile shortcomings behind desktop-first CSS.
+The public site includes Home, Platform, Industries, Customers, Intelligence, and Company routes. A separate Command Center route represents the signed-in operating product with asset health, consequence charts, alerts, response workflow, scheduling, filtering, sorting, pagination, and response creation.
 
-## Design Principles
+## Experience Principles
 
-1. **The collection is the interface.** Realistic objects, exhibitions, people, schedules, and condition evidence drive every screen.
-2. **Editorial invitation, operational precision.** The entry experience creates cultural interest; working routes become dense, calm, and exact.
-3. **Show system breadth through work.** Every CorvaUI component must support a believable user goal, state, or decision.
-4. **Mobile is an operating surface.** Core workflows, data, navigation, overlays, and forms must be intentionally usable with touch at narrow widths.
-5. **Evidence earns confidence.** Loading, empty, success, warning, error, disabled, validation, focus, and overflow states are part of the product, not test-only decoration.
+1. **The customer problem leads.** Marketing language focuses on network outcomes and operating reality.
+2. **The real world is visible.** Editorial infrastructure photography carries identity, context, and scale.
+3. **Depth comes from relationships.** Condition, consequence, ownership, access, response, and evidence remain connected.
+4. **Product proof belongs in the work.** CorvaUI components appear through realistic decisions rather than isolated specimens.
+5. **Public and operational modes are distinct.** Marketing remains editorial; the command center becomes dense and utilitarian.
+6. **Mobile is complete.** Navigation, reading, data access, forms, overlays, and command workflows remain intentional at 390px.
 
-## Accessibility & Inclusion
+## Accessibility
 
-Target WCAG 2.1 A and AA across all routes and both themes. Preserve visible keyboard focus, semantic landmarks, useful labels, 44px touch targets for coarse pointers, reduced-motion support, color-independent status cues, zoom and reflow, and clear alternatives to hover or gesture-only interaction.
+Target WCAG AA with semantic landmarks, useful alternative text, keyboard interaction, visible focus, reduced-motion behavior, accessible chart tables, color-independent statuses, and component-owned overflow for dense data.

@@ -23,6 +23,7 @@
     "vite": "^8.2.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.62.1",
     "axe-core": "^4.13.0",
     "vitest": "^4.1.11"
