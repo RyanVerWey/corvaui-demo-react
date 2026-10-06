@@ -189,7 +189,7 @@ function HomePage({ navigate, openContact }: { navigate: Navigate; openContact: 
       <section className="home-hero" data-corva-theme="concept-dark">
         <img src={image("asterline-port-hero.png")} alt="Intermodal port, rail, and road infrastructure operating at blue hour" />
         <div className="home-hero-content reveal">
-          <div className="live-line"><Badge tone="success">Network normal</Badge><span>North Atlantic region</span><span>08:42 UTC</span></div>
+          <div className="live-line"><Badge tone="info">Synthetic scenario</Badge><span>Fictional North Atlantic network</span><span>Illustrative snapshot</span></div>
           <Eyebrow>Asterline infrastructure intelligence</Eyebrow>
           <Typography as="h1" variant="display">Keep the world<br />in motion.</Typography>
           <Typography variant="subtitle">One operating picture for the people responsible for energy, transit, water, and the systems between them.</Typography>
@@ -199,14 +199,14 @@ function HomePage({ navigate, openContact }: { navigate: Navigate; openContact: 
           </Stack>
         </div>
         <div className="hero-metrics">
-          <Metric label="Signals evaluated" value="4.8B" note="each day" />
-          <Metric label="Assets observed" value="2.1M" note="across 31 countries" />
-          <Metric label="Response gained" value="38m" note="median lead time" />
+          <Metric label="Illustrative signals" value="4.8B" note="synthetic daily volume" />
+          <Metric label="Illustrative assets" value="2.1M" note="fictional portfolio" />
+          <Metric label="Illustrative response" value="38m" note="scenario lead time" />
         </div>
       </section>
 
-      <section className="customer-ribbon" aria-label="Selected operators">
-        <span>Northshore Energy</span><span>Metro East</span><span>Port Meridian</span><span>Cedar Water</span><span>Helix Rail</span>
+      <section className="customer-ribbon" aria-label="Fictional operator examples">
+        <span>Fictional operator examples</span><span>Northshore Energy</span><span>Metro East</span><span>Port Meridian</span><span>Cedar Water</span><span>Helix Rail</span>
       </section>
 
       <section className="editorial-intro content-shell reveal">
@@ -225,9 +225,9 @@ function HomePage({ navigate, openContact }: { navigate: Navigate; openContact: 
       </section>
 
       <section className="product-evidence content-shell">
-        <div className="section-copy"><Eyebrow>Live operating picture</Eyebrow><Typography as="h2" variant="display">Every decision keeps its context.</Typography><Typography variant="body">Health, consequence, ownership, and action stay together from the first anomaly through verified closeout.</Typography></div>
+        <div className="section-copy"><Eyebrow>Simulated operating picture</Eyebrow><Typography as="h2" variant="display">Every decision keeps its context.</Typography><Typography variant="body">Health, consequence, ownership, and action stay together from the first anomaly through verified closeout.</Typography></div>
         <Paper className="evidence-surface" elevation="none">
-          <Toolbar label="Network health controls"><Typography variant="title">Cedar regional network</Typography><Badge tone="success">97.4% available</Badge><Button size="sm" variant="secondary" onClick={() => navigate("command")}>Open network</Button></Toolbar>
+          <Toolbar label="Network health controls"><Typography variant="title">Cedar regional scenario</Typography><Badge tone="info">Illustrative 97.4%</Badge><Button size="sm" variant="secondary" onClick={() => navigate("command")}>Open scenario</Button></Toolbar>
           <div className="evidence-grid">
             <div><Eyebrow>Exposure by day</Eyebrow><Chart label="Seven day network exposure" type="line" animated showGrid showLegend showPoints height={280} xKey="day" data={[{ day: "Mon", risk: 18, baseline: 24 }, { day: "Tue", risk: 21, baseline: 24 }, { day: "Wed", risk: 17, baseline: 24 }, { day: "Thu", risk: 29, baseline: 24 }, { day: "Fri", risk: 23, baseline: 24 }, { day: "Sat", risk: 15, baseline: 24 }, { day: "Sun", risk: 13, baseline: 24 }]} series={[{ key: "risk", label: "Observed exposure" }, { key: "baseline", label: "Planning threshold" }]} /></div>
             <div className="signal-list"><Eyebrow>Priority signals</Eyebrow><div><span><Badge tone="danger">Critical</Badge><strong>Transformer heat rise</strong></span><strong>SUB-09</strong></div><div><span><Badge tone="warning">Watch</Badge><strong>Wind gearbox vibration</strong></span><strong>WTG-214</strong></div><div><span><Badge tone="info">Planned</Badge><strong>Aqueduct pressure test</strong></span><strong>VAL-291</strong></div><Progress label="Response plans ready: 86%" value={86} /></div>
@@ -237,15 +237,15 @@ function HomePage({ navigate, openContact }: { navigate: Navigate; openContact: 
 
       <section className="case-feature content-shell">
         <img src={image("asterline-city-network.png")} alt="Urban rail, road, power, and water networks converging at a river" />
-        <div><Eyebrow>Metro East case study</Eyebrow><Typography as="h2" variant="display">One river. Four networks. Zero shared blind spots.</Typography><Typography variant="body">Metro East connected transit, power, drainage, and bridge teams around one consequence model before its busiest construction season.</Typography><div className="case-results"><Metric label="Service interruptions" value="-27%" note="year over year" /><Metric label="Emergency callouts" value="-41%" note="in six months" /></div><Button variant="primary" size="lg" onClick={() => navigate("customers")}>Read the full story <Icon name="arrowRight" /></Button></div>
+        <div><Eyebrow>Fictional Metro East scenario</Eyebrow><Typography as="h2" variant="display">One river. Four networks. Zero shared blind spots.</Typography><Typography variant="body">This designed scenario shows transit, power, drainage, and bridge teams sharing one consequence model before a busy construction season.</Typography><div className="case-results"><Metric label="Illustrative interruptions" value="-27%" note="scenario outcome" /><Metric label="Illustrative callouts" value="-41%" note="scenario outcome" /></div><Button variant="primary" size="lg" onClick={() => navigate("customers")}>Explore the scenario <Icon name="arrowRight" /></Button></div>
       </section>
 
       <section className="quote-band" data-corva-theme="concept-dark">
         <blockquote>“We stopped asking which dashboard was right and started deciding what the network needed.”</blockquote>
-        <p>Marisol Chen, VP Network Operations, Metro East</p>
+        <p>Fictional operator perspective · Metro East scenario</p>
       </section>
 
-      <section className="closing-cta content-shell"><Eyebrow>See your network differently</Eyebrow><Typography as="h2" variant="display">Bring the work into one operating picture.</Typography><Stack direction="row" gap="md"><Button variant="primary" size="lg" onClick={openContact}>Plan a working session</Button><Button variant="secondary" size="lg" onClick={() => navigate("command")}>Explore the live environment</Button></Stack></section>
+      <section className="closing-cta content-shell"><Eyebrow>See your network differently</Eyebrow><Typography as="h2" variant="display">Bring the work into one operating picture.</Typography><Stack direction="row" gap="md"><Button variant="primary" size="lg" onClick={openContact}>Preview a working session</Button><Button variant="secondary" size="lg" onClick={() => navigate("command")}>Explore the simulated environment</Button></Stack></section>
     </>
   );
 }
@@ -259,21 +259,21 @@ function PlatformPage({ navigate }: { navigate: Navigate }) {
     { id: "verify", label: "Verify" },
   ];
   const tabContent: Record<string, { title: string; body: string; stat: string; note: string }> = {
-    observe: { title: "A living model of the network", body: "Telemetry, inspection evidence, weather, operational limits, and asset history resolve into one current state.", stat: "12 sec", note: "median signal-to-context time" },
-    predict: { title: "Consequence before confidence", body: "Asterline separates model certainty from operational consequence so teams can act early without treating every anomaly as an emergency.", stat: "38 min", note: "median response time gained" },
-    coordinate: { title: "The complete work moves together", body: "People, parts, permits, access, and procedures travel with the decision instead of arriving through disconnected systems.", stat: "91%", note: "first-visit resolution" },
-    verify: { title: "Close the loop with evidence", body: "Field proof, measurements, approvals, and follow-up signals stay attached to the asset record and improve the next decision.", stat: "2.7x", note: "faster verified closeout" },
+    observe: { title: "A living model of the network", body: "Telemetry, inspection evidence, weather, operational limits, and asset history resolve into one current state.", stat: "12 sec", note: "illustrative signal-to-context time" },
+    predict: { title: "Consequence before confidence", body: "Asterline separates model certainty from operational consequence so teams can act early without treating every anomaly as an emergency.", stat: "38 min", note: "illustrative response gain" },
+    coordinate: { title: "The complete work moves together", body: "People, parts, permits, access, and procedures travel with the decision instead of arriving through disconnected systems.", stat: "91%", note: "illustrative first-visit resolution" },
+    verify: { title: "Close the loop with evidence", body: "Field proof, measurements, approvals, and follow-up signals stay attached to the asset record and improve the next decision.", stat: "2.7x", note: "illustrative closeout comparison" },
   };
   const content = tabContent[active];
   return (
     <div className="page-shell platform-page">
-      <PageLead eyebrow="Asterline platform" title="An operating system for physical networks." body="Observe the system, understand consequence, coordinate response, and preserve the evidence that makes every next decision better." marker="01 / Operating model" markerIcon={<Icon name="workflow" />} details={["Four connected layers", "One traceable record", "Live across every shift"]} />
+      <PageLead eyebrow="Asterline platform concept" title="An operating system for physical networks." body="Observe the system, understand consequence, coordinate response, and preserve the evidence that makes every next decision better." marker="01 / Operating model" markerIcon={<Icon name="workflow" />} details={["Four connected layers", "One traceable record", "Designed for every shift"]} />
       <section className="platform-model">
         <Tabs label="Platform capabilities" activeId={active} items={tabs} onChange={setActive} />
         <div className="platform-detail"><div><Typography as="h2" variant="display">{content.title}</Typography><Typography variant="subtitle">{content.body}</Typography><Button variant="primary" size="lg" onClick={() => navigate("command")}>See it in operation <Icon name="arrowRight" /></Button></div><Metric label="Operational result" value={content.stat} note={content.note} /></div>
       </section>
       <section className="platform-analysis">
-        <div className="section-copy"><Eyebrow>Decision velocity</Eyebrow><Typography as="h2" variant="display">See where operating time is actually lost.</Typography><Typography variant="body">Asterline measures the interval between signal, interpretation, ownership, and action. Teams improve the operating system, not just the dashboard.</Typography><div className="analysis-facts"><Metric label="Median before" value="46 min" note="signal to owned action" /><Metric label="Median with Asterline" value="12 min" note="signal to owned action" /></div></div>
+        <div className="section-copy"><Eyebrow>Decision velocity scenario</Eyebrow><Typography as="h2" variant="display">See where operating time is actually lost.</Typography><Typography variant="body">Asterline measures the interval between signal, interpretation, ownership, and action. Teams improve the operating system, not just the dashboard.</Typography><div className="analysis-facts"><Metric label="Illustrative baseline" value="46 min" note="synthetic signal to action" /><Metric label="Illustrative Asterline model" value="12 min" note="synthetic signal to action" /></div></div>
         <Paper className="analysis-chart" elevation="none"><Chart label="Signal to action time distribution" type="histogram" animated bins={7} controls={["data-table", "download"]} domain={[0, 60]} height={360} xKey="observation" data={[14, 18, 19, 21, 23, 24, 27, 29, 31, 33, 36, 41, 44, 48, 52, 58].map((minutes, index) => ({ observation: index + 1, minutes }))} series={[{ key: "minutes", label: "Minutes to owned action" }]} /></Paper>
       </section>
       <section className="control-room-feature"><img src={image("asterline-control-room.png")} alt="Regional transit operations team coordinating service" /><div><Eyebrow>Shared operational truth</Eyebrow><Typography as="h2" variant="display">Built for decisions with real consequences.</Typography><Typography variant="body">Asterline supports control centers, planners, engineers, and field teams without flattening their distinct responsibilities.</Typography></div></section>
@@ -307,20 +307,20 @@ function IndustriesPage({ openContact }: { openContact: () => void }) {
 
 function CustomersPage({ openContact }: { openContact: () => void }) {
   const stories = [
-    { id: "metro", label: "Metro East", content: <article className="carousel-story"><img src={image("asterline-city-network.png")} alt="Metro East urban network" /><div><Eyebrow>Transit and civic infrastructure</Eyebrow><Typography as="h2" variant="display">One river. Four networks. Zero shared blind spots.</Typography><p>A joint operating model gave transit, power, drainage, and bridge teams a single view of construction-season consequence.</p><div className="story-stats"><Metric label="Interruptions" value="-27%" note="year over year" /><Metric label="Callouts" value="-41%" note="within six months" /></div></div></article> },
-    { id: "northshore", label: "Northshore Energy", content: <article className="carousel-story"><img src={image("asterline-wind-field.png")} alt="Northshore Energy offshore operations" /><div><Eyebrow>Offshore wind</Eyebrow><Typography as="h2" variant="display">Maintenance that moves with the weather.</Typography><p>Northshore aligned condition risk, vessel access, parts, and specialist crews across 214 offshore turbines.</p><div className="story-stats"><Metric label="Lost generation" value="-18%" note="in the first year" /><Metric label="First visits" value="94%" note="completed as planned" /></div></div></article> },
-    { id: "port", label: "Port Meridian", content: <article className="carousel-story"><img src={image("asterline-port-hero.png")} alt="Port Meridian intermodal terminal" /><div><Eyebrow>Intermodal logistics</Eyebrow><Typography as="h2" variant="display">Reliability across every handoff.</Typography><p>Port Meridian connected crane, rail, gate, yard, and berth operations around throughput consequence.</p><div className="story-stats"><Metric label="Unplanned delay" value="-33%" note="across the terminal" /><Metric label="Throughput" value="+11%" note="without new equipment" /></div></div></article> },
+    { id: "metro", label: "Metro East scenario", content: <article className="carousel-story"><img src={image("asterline-city-network.png")} alt="Fictional Metro East urban network" /><div><Eyebrow>Fictional transit and civic scenario</Eyebrow><Typography as="h2" variant="display">One river. Four networks. Zero shared blind spots.</Typography><p>This designed scenario gives transit, power, drainage, and bridge teams a single view of construction-season consequence.</p><div className="story-stats"><Metric label="Illustrative interruptions" value="-27%" note="synthetic outcome" /><Metric label="Illustrative callouts" value="-41%" note="synthetic outcome" /></div></div></article> },
+    { id: "northshore", label: "Northshore scenario", content: <article className="carousel-story"><img src={image("asterline-wind-field.png")} alt="Fictional Northshore offshore operations" /><div><Eyebrow>Fictional offshore-wind scenario</Eyebrow><Typography as="h2" variant="display">Maintenance that moves with the weather.</Typography><p>This designed scenario aligns condition risk, vessel access, parts, and specialist crews across a synthetic turbine portfolio.</p><div className="story-stats"><Metric label="Illustrative generation" value="-18%" note="synthetic outcome" /><Metric label="Illustrative first visits" value="94%" note="synthetic outcome" /></div></div></article> },
+    { id: "port", label: "Port Meridian scenario", content: <article className="carousel-story"><img src={image("asterline-port-hero.png")} alt="Fictional Port Meridian intermodal terminal" /><div><Eyebrow>Fictional intermodal scenario</Eyebrow><Typography as="h2" variant="display">Reliability across every handoff.</Typography><p>This designed scenario connects crane, rail, gate, yard, and berth operations around throughput consequence.</p><div className="story-stats"><Metric label="Illustrative delay" value="-33%" note="synthetic outcome" /><Metric label="Illustrative throughput" value="+11%" note="synthetic outcome" /></div></div></article> },
   ];
   return (
     <div className="page-shell customers-page">
-      <PageLead eyebrow="Customer outcomes" title="Measured in service kept, not screens shipped." body="Asterline deployments begin with a live operating problem and remain accountable to the result." marker="03 / Field proof" markerIcon={<Icon name="verified" />} details={["2.1 million assets", "31 countries", "12.6 million verified actions"]} />
-      <Carousel className="customer-carousel" label="Customer stories" items={stories} />
-      <section className="outcome-ledger"><Metric label="Avoided downtime" value="1.9M hrs" note="across deployed networks" /><Metric label="Planning lead time" value="+38 min" note="median improvement" /><Metric label="Field completion" value="91%" note="on the first visit" /><Metric label="Verified actions" value="12.6M" note="retained with evidence" /></section>
+      <PageLead eyebrow="Fictional outcome scenarios" title="Measured in service kept, not screens shipped." body="These designed examples demonstrate how an operating problem and its result could be represented; they are not customer case studies." marker="03 / Scenario proof" markerIcon={<Icon name="verified" />} details={["Synthetic portfolios", "Illustrative outcomes", "No customer endorsements"]} />
+      <Carousel className="customer-carousel" label="Fictional scenario stories" items={stories} />
+      <section className="outcome-ledger"><Metric label="Illustrative downtime" value="1.9M hrs" note="synthetic portfolio" /><Metric label="Illustrative lead time" value="+38 min" note="synthetic outcome" /><Metric label="Illustrative completion" value="91%" note="synthetic outcome" /><Metric label="Illustrative actions" value="12.6M" note="synthetic records" /></section>
       <section className="customer-proof">
         <Paper className="analysis-chart" elevation="none"><Chart label="Avoided service interruption share by network" type="donut" animated controls={["data-table", "download"]} height={380} showLegend xKey="portfolio" data={[{ portfolio: "Avoided hours", energy: 34, transit: 27, water: 21, ports: 18 }]} series={[{ key: "energy", label: "Energy" }, { key: "transit", label: "Transit" }, { key: "water", label: "Water" }, { key: "ports", label: "Ports" }]} /></Paper>
-        <div className="section-copy"><Eyebrow>Portfolio evidence</Eyebrow><Typography as="h2" variant="display">Reliability gains show up across the whole network.</Typography><Typography variant="body">The strongest programs do not optimize one asset class in isolation. They connect operating context across the services, handoffs, and dependencies that customers actually experience.</Typography><div className="proof-note"><Icon name="shieldCheck" /><span>Outcomes independently reviewed against each operator's pre-deployment baseline.</span></div></div>
+        <div className="section-copy"><Eyebrow>Illustrative portfolio model</Eyebrow><Typography as="h2" variant="display">Reliability gains show up across the whole network.</Typography><Typography variant="body">The scenario connects operating context across services, handoffs, and dependencies rather than optimizing one asset class in isolation.</Typography><div className="proof-note"><Icon name="shieldCheck" /><span>All organizations, baselines, and outcomes shown here are fictional demonstration content.</span></div></div>
       </section>
-      <section className="customer-quote-grid"><blockquote>“Asterline gave engineering and operations a shared language for consequence.”<cite>Tom Adeyemi, Cedar Grid</cite></blockquote><blockquote>“The field team gets the reason, not just the work order.”<cite>Leila Morgan, Northshore Energy</cite></blockquote></section>
+      <section className="customer-quote-grid"><blockquote>“Asterline gave engineering and operations a shared language for consequence.”<cite>Fictional operator perspective · Cedar Grid scenario</cite></blockquote><blockquote>“The field team gets the reason, not just the work order.”<cite>Fictional operator perspective · Northshore scenario</cite></blockquote></section>
       <section className="closing-cta"><Eyebrow>Your first operating problem</Eyebrow><Typography as="h2" variant="display">Make the business case with your own network data.</Typography><Button variant="primary" size="lg" onClick={openContact}>Plan a working session</Button></section>
     </div>
   );
@@ -328,7 +328,7 @@ function CustomersPage({ openContact }: { openContact: () => void }) {
 
 const insightArticles = [
   { type: "Field note", title: "Why condition is not consequence", summary: "A practical model for deciding when uncertain signals still require action.", time: "8 min", image: "asterline-wind-field.png" },
-  { type: "Research", title: "The 2026 network resilience index", summary: "What 31 infrastructure operators reveal about coordination, evidence, and recovery.", time: "24 min", image: "asterline-city-network.png" },
+  { type: "Scenario research", title: "The 2026 network resilience model", summary: "What a synthetic 31-operator scenario illustrates about coordination, evidence, and recovery.", time: "24 min", image: "asterline-city-network.png" },
   { type: "Operator guide", title: "Designing an effective control-room handoff", summary: "A clear operating pattern for preserving context across shifts and teams.", time: "11 min", image: "asterline-control-room.png" },
   { type: "Case briefing", title: "Planning access across an intermodal terminal", summary: "How consequence modeling changed maintenance windows at Port Meridian.", time: "7 min", image: "asterline-port-hero.png" },
   { type: "Technical brief", title: "From telemetry to defensible evidence", summary: "A traceable path from anomaly detection to verified closeout.", time: "15 min", image: "asterline-control-room.png" },
@@ -366,11 +366,11 @@ function InsightsPage() {
 function CompanyPage({ openContact }: { openContact: () => void }) {
   return (
     <div className="page-shell company-page">
-      <PageLead eyebrow="Company" title="The physical world deserves better operating software." body="Asterline is built by infrastructure engineers, operators, product designers, and applied scientists who believe reliability is a shared discipline." marker="05 / Asterline" markerIcon={<Icon name="compass" />} details={["Founded in 2018", "Built alongside operators", "Remote across 12 countries"]} />
+      <PageLead eyebrow="Fictional company profile" title="The physical world deserves better operating software." body="This fictional Asterline team profile demonstrates how an infrastructure product company could present its mission and values." marker="05 / Asterline scenario" markerIcon={<Icon name="compass" />} details={["Illustrative history", "Fictional team", "No real job openings"]} />
       <section className="company-manifesto"><img src={image("asterline-control-room.png")} alt="Infrastructure operations team at work" /><blockquote>We build for the people who carry consequence long after a software decision ships.</blockquote></section>
       <section className="company-values"><div><span>01</span><Typography as="h2" variant="title">Operational truth over software theater.</Typography><p>The product must clarify the real system, not create a more attractive version of uncertainty.</p></div><div><span>02</span><Typography as="h2" variant="title">Context travels with the work.</Typography><p>No one should receive an action without understanding the reason, consequence, and evidence.</p></div><div><span>03</span><Typography as="h2" variant="title">Trust is designed into the record.</Typography><p>Models explain themselves, decisions remain reviewable, and field proof closes the loop.</p></div></section>
-      <section className="company-history"><div className="section-copy"><Eyebrow>Built alongside operators</Eyebrow><Typography as="h2" variant="display">A decade of learning how networks actually fail and recover.</Typography></div><Timeline events={[{ id: "2018", label: "Asterline founded", meta: "2018", description: "First reliability model developed with a regional power operator." }, { id: "2020", label: "Field orchestration launched", meta: "2020", description: "Decisions connected directly to crews, access, and evidence." }, { id: "2023", label: "Multi-network consequence", meta: "2023", description: "Transit, water, and energy dependencies entered one operating model." }, { id: "2026", label: "31 countries", meta: "Today", description: "2.1 million assets observed across critical physical networks." }]} /></section>
-      <section className="jobs-section"><div className="section-copy"><Eyebrow>Join Asterline</Eyebrow><Typography as="h2" variant="display">Work on software that has to hold up in the real world.</Typography></div><Accordion items={[{ id: "product", title: "Senior product designer, network operations", content: "Lead complex workflow design with operators across energy and transit. Remote within North American time zones." }, { id: "frontend", title: "Staff frontend engineer, data systems", content: "Build high-density, accessible operating interfaces and visualization infrastructure. Remote within US or Canada." }, { id: "reliability", title: "Infrastructure reliability specialist", content: "Translate operating practice into models, workflows, and deployment outcomes. Travel up to 25%." }]} /><Button variant="primary" size="lg" onClick={openContact}>Introduce yourself <Icon name="arrowRight" /></Button></section>
+      <section className="company-history"><div className="section-copy"><Eyebrow>Illustrative company history</Eyebrow><Typography as="h2" variant="display">A fictional timeline of network operations learning.</Typography></div><Timeline events={[{ id: "2018", label: "Scenario begins", meta: "2018", description: "Illustrative reliability-model milestone." }, { id: "2020", label: "Field orchestration concept", meta: "2020", description: "Illustrative connection among crews, access, and evidence." }, { id: "2023", label: "Multi-network concept", meta: "2023", description: "Illustrative transit, water, and energy dependency model." }, { id: "2026", label: "Synthetic portfolio", meta: "Today", description: "Fictional assets and regions used to demonstrate the interface." }]} /></section>
+      <section className="jobs-section"><div className="section-copy"><Eyebrow>Illustrative team roles</Eyebrow><Typography as="h2" variant="display">Example roles for a fictional product team.</Typography></div><Accordion items={[{ id: "product", title: "Senior product designer, network operations", content: "Fictional role demonstrating complex workflow design across energy and transit." }, { id: "frontend", title: "Staff frontend engineer, data systems", content: "Fictional role demonstrating accessible operating interfaces and visualization work." }, { id: "reliability", title: "Infrastructure reliability specialist", content: "Fictional role demonstrating translation of operating practice into product workflows." }]} /><Button variant="primary" size="lg" onClick={openContact}>Preview contact flow <Icon name="arrowRight" /></Button></section>
     </div>
   );
 }
@@ -445,6 +445,11 @@ export function App() {
         <MenuBar className="desktop-nav" label="Primary navigation" items={publicNav.map((item) => ({ id: item.id, label: item.label, current: route === item.id, onSelect: () => navigate(item.id) }))} />
         <div className="header-actions"><Switch label="Dark" checked={mode === "dark"} onChange={() => setMode(mode === "dark" ? "light" : "dark")} /><Button className="contact-button" variant="secondary" size="sm" onClick={() => setContactOpen(true)}>Talk to us</Button><Button className="command-button" variant="primary" size="sm" onClick={() => navigate("command")}>Command center</Button><Button className="mobile-menu" variant="secondary" size="sm" aria-label="Open navigation" onClick={() => setDrawerOpen(true)}><Icon name="menu" /></Button></div>
       </header>
+
+      <aside className="demo-disclosure" role="note" aria-label="Fictional demo disclosure">
+        <strong>Fictional product demonstration</strong>
+        <span>Asterline, its organizations, people, metrics, testimonials, case studies, and operational data are synthetic examples. Nothing shown is a customer endorsement or live service.</span>
+      </aside>
 
       <main><SitePage route={route} navigate={navigate} openContact={() => setContactOpen(true)} notify={setNotice} openWork={() => setWorkOpen(true)} /></main>
 

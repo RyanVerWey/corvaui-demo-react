@@ -2,11 +2,11 @@
 
 ## Asterline
 
-Asterline is an infrastructure intelligence platform for the teams responsible for energy, transit, water, ports, and connected civic systems. This React demonstration presents Asterline as a complete business and working product. CorvaUI is the underlying interface system, not the subject of the customer narrative.
+Asterline is a fictional infrastructure-intelligence product concept for teams responsible for energy, transit, water, ports, and connected civic systems. This React demonstration presents a complete product narrative and working interface using synthetic organizations, people, metrics, testimonials, histories, and operating data. It does not represent a live service or customer endorsement. CorvaUI is the underlying interface system, not the subject of the fictional customer narrative.
 
 ## Product Purpose
 
-Connect live asset condition, network consequence, field work, weather, access, materials, and evidence in one operating picture. Asterline helps operators identify meaningful change early, understand what is at stake, coordinate a complete response, and retain proof of the outcome.
+Connect representative asset condition, network consequence, field work, weather, access, materials, and evidence in one operating picture. The fictional Asterline scenario shows how operators could identify meaningful change early, understand what is at stake, coordinate a complete response, and retain proof of the outcome.
 
 ## Primary Audiences
 

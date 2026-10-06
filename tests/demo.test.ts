@@ -23,12 +23,15 @@ describe("Asterline React demo contract", () => {
     expect(app).not.toMatch(/<(button|input|select|textarea)\b/);
   });
 
-  it("presents a real infrastructure product across seven routes", () => {
+  it("presents a clearly fictional infrastructure-product scenario across seven routes", () => {
     expect(app).toContain('type Route = "home" | "platform" | "industries" | "customers" | "insights" | "company" | "command"');
     for (const page of ["HomePage", "PlatformPage", "IndustriesPage", "CustomersPage", "InsightsPage", "CompanyPage", "CommandPage"]) {
       expect(app).toContain(`function ${page}`);
     }
     expect(app).not.toMatch(/component catalog|showcase CorvaUI|atomic taxonomy/i);
+    expect(app).toContain('aria-label="Fictional demo disclosure"');
+    expect(app).toContain("Nothing shown is a customer endorsement or live service.");
+    expect(app).toContain("Fictional operator perspective");
   });
 
   it("uses the complete generated editorial image set", () => {
@@ -53,7 +56,7 @@ describe("Asterline React demo contract", () => {
       expect(app).toContain(`type=\"${type}\"`);
     }
     expect(app).toContain('marker="01 / Operating model"');
-    expect(app).toContain('marker="05 / Asterline"');
+    expect(app).toContain('marker="05 / Asterline scenario"');
     expect(app.match(/size="lg"/g)?.length ?? 0).toBeGreaterThanOrEqual(12);
   });
 

@@ -13,13 +13,22 @@ async function waitForFiniteMotion(page: Page) {
   });
 }
 
-test("home behaves like a complete infrastructure product site", async ({ page }) => {
+async function expectFictionalDisclosure(page: Page) {
+  const disclosure = page.getByRole("note", { name: "Fictional demo disclosure" });
+  await expect(disclosure).toBeVisible();
+  await expect(disclosure).toContainText("Fictional product demonstration");
+  await expect(disclosure).toContainText("Nothing shown is a customer endorsement or live service.");
+}
+
+test("home behaves like a complete infrastructure product site", async ({ page }, testInfo) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1, name: /Keep the world/ })).toBeVisible();
   await expect(page.getByText("Asterline infrastructure intelligence")).toBeVisible();
-  await expect(page.getByText("Metro East case study")).toBeVisible();
+  await expect(page.getByText("Fictional Metro East scenario")).toBeVisible();
   await expect(page.getByRole("button", { name: "Enter command center" })).toBeVisible();
+  await expectFictionalDisclosure(page);
   await expectNoPageOverflow(page);
+  await page.screenshot({ path: testInfo.outputPath("home-disclosure.png"), fullPage: true });
 });
 
 test("all public routes use browser history and retain Asterline navigation", async ({ page }) => {
@@ -36,6 +45,7 @@ test("all public routes use browser history and retain Asterline navigation", as
     await page.getByRole("menuitem", { name: label, exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`${path}$`));
     await expect(page.getByRole("heading", { level: 1, name: heading })).toBeVisible();
+    await expectFictionalDisclosure(page);
   }
   await page.goBack();
   await expect(page).toHaveURL(/\/insights$/);
@@ -43,6 +53,7 @@ test("all public routes use browser history and retain Asterline navigation", as
 
 test("command center supports data discovery, sorting, pagination, and response creation", async ({ page }) => {
   await page.goto("/command");
+  await expectFictionalDisclosure(page);
   await expect(page.getByRole("heading", { level: 1, name: "North region" })).toBeVisible();
   await expect(page.getByText("Deterministic preview · synthetic data")).toBeVisible();
   const assetFilter = page.getByRole("searchbox", { name: "Filter Asset" });
@@ -66,7 +77,7 @@ test("theme, contact dialog, and mobile drawer work", async ({ page }) => {
   await page.getByRole("button", { name: "Talk to an engineer" }).click();
   await expect(page.getByRole("heading", { name: "Plan an Asterline working session" })).toBeVisible();
   await page.getByRole("button", { name: "Cancel" }).click();
-  await page.setViewportSize({ width: 390, height: 844 });
+  await page.setViewportSize({ width: 320, height: 720 });
   await page.getByRole("button", { name: "Open navigation" }).click();
   await expect(page.locator(".corva-drawer-title")).toHaveText("Asterline navigation");
   await expect(page.getByRole("button", { name: "Platform" }).last()).toBeVisible();
@@ -82,16 +93,18 @@ test("intelligence search exposes a recoverable empty state", async ({ page }) =
   await expect(page.getByRole("heading", { name: "Why condition is not consequence", exact: true })).toBeVisible();
 });
 
-test("mobile home and command center remain complete without page overflow", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
+test("320px home and command center remain complete without page overflow", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 320, height: 720 });
   for (const route of ["/", "/command"]) {
     await page.goto(route);
+    await expectFictionalDisclosure(page);
     await expectNoPageOverflow(page);
     await expect(page.locator("h1").first()).toBeVisible();
   }
   const grid = page.locator(".corva-data-grid .corva-table-container");
   const dimensions = await grid.evaluate((element) => ({ clientWidth: element.clientWidth, scrollWidth: element.scrollWidth }));
   expect(dimensions.scrollWidth).toBeGreaterThan(dimensions.clientWidth);
+  await page.screenshot({ path: testInfo.outputPath("command-disclosure-320.png"), fullPage: true });
 });
 
 test("all routes and themes have no serious or critical accessibility violations", async ({ page }) => {

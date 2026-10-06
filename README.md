@@ -1,6 +1,6 @@
 # Asterline · CorvaUI React flagship
 
-Asterline is a private review showcase for the published `@corvaui/react` and `@corvaui/tokens` packages. It presents an infrastructure-intelligence product across six public routes and a separate Command Center, with responsive composition, working interactions, feedback states, Concept light/dark themes, accessibility checks, and realistic synthetic operating data.
+Asterline is a fictional private-review showcase for the published `@corvaui/react` and `@corvaui/tokens` packages. It presents an infrastructure-intelligence product scenario across six public routes and a separate Command Center, with responsive composition, working interactions, feedback states, Concept light/dark themes, accessibility checks, and realistic synthetic operating data. Names, organizations, metrics, testimonials, histories, and outcomes are illustrative; the demo makes no customer endorsement or live-service claim.
 
 ## Local preview
 

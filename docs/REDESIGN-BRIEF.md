@@ -25,10 +25,10 @@ Identify a consequential network signal, understand its operational context, and
 
 ## Information architecture
 
-1. **Home:** Product promise, infrastructure context, customer evidence, and entry to Command Center.
+1. **Home:** Product promise, infrastructure context, clearly fictional scenario evidence, and entry to Command Center.
 2. **Platform:** Connected operating model, decision latency, and shared operational truth.
 3. **Industries:** Energy, transit, water, port, and civic-network use cases.
-4. **Customers:** Outcomes, portfolio evidence, and case-study proof.
+4. **Customers:** Fictional outcomes, illustrative portfolio evidence, and scenario proof with no endorsement claim.
 5. **Intelligence:** Searchable research and a recoverable no-results state.
 6. **Company:** Product history, operating principles, roles, and contact workflow.
 7. **Command Center:** Asset discovery, sorting, filtering, paging, consequence charts, work orchestration, schedules, response creation, uploads, dialogs, and system feedback.
